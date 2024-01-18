@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "049de8098a00b737e18268d78fb3f5d3",
+    "content-hash": "64ff83434dfddb4225946e91736353b9",
     "packages": [
         {
             "name": "atoolo/resource",
@@ -58,10 +58,16 @@
         {
             "name": "atoolo/search",
             "version": "dev-feature/initial-implementation",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/sitepark/atoolo-search.git",
+                "reference": "183eab0b2f7a2bc789d8a6ae47273a8325ae2e4d"
+            },
             "dist": {
-                "type": "path",
-                "url": "/home/veltrup/.cache/composer/link/atoolo/search",
-                "reference": "1f9d75cea24dca22e80774e66cc52566056adc51"
+                "type": "zip",
+                "url": "https://api.github.com/repos/sitepark/atoolo-search/zipball/183eab0b2f7a2bc789d8a6ae47273a8325ae2e4d",
+                "reference": "183eab0b2f7a2bc789d8a6ae47273a8325ae2e4d",
+                "shasum": ""
             },
             "require": {
                 "atoolo/resource": "dev-main",
@@ -89,59 +95,7 @@
                     "Atoolo\\Search\\": "src"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "Atoolo\\Search\\Test\\": "test"
-                }
-            },
-            "scripts": {
-                "post-install-cmd": [
-                    "phive --no-progress install --force-accept-unsigned --trust-gpg-keys C00543248C87FB13,4AA394086372C20A,CF1A108D0E7AE720,51C67305FFC2E5C0"
-                ],
-                "analyse": [
-                    "@analyse:phplint",
-                    "@analyse:phpstan",
-                    "@analyse:phpcs",
-                    "@analyse:compatibilitycheck"
-                ],
-                "analyse:compatibilitycheck": [
-                    "./vendor/bin/phpcs --standard=./phpcs.compatibilitycheck.xml"
-                ],
-                "analyse:phpcs": [
-                    "./vendor/bin/phpcs"
-                ],
-                "analyse:phplint": [
-                    "./tools/phplint"
-                ],
-                "analyse:phpstan": [
-                    "./tools/phpstan analyse"
-                ],
-                "cs-fix": [
-                    "@cs-fix:phpcbf"
-                ],
-                "cs-fix:phpcbf": [
-                    "./vendor/bin/phpcbf"
-                ],
-                "report": [
-                    "@report:phpcs",
-                    "@report:phpstan"
-                ],
-                "report:phpcs": [
-                    "./vendor/bin/phpcs || exit 0"
-                ],
-                "report:phpstan": [
-                    "./tools/phpstan analyse --no-progress --no-ansi --no-interaction --error-format=checkstyle > ./var/log/phpstan-report.xml || exit 0"
-                ],
-                "test": [
-                    "@test:phpunit"
-                ],
-                "test:phpunit": [
-                    "./tools/phpunit.phar -c phpunit.xml --coverage-text"
-                ],
-                "test:infection": [
-                    "vendor/bin/infection --threads=8 --no-progress --only-covered -s || exit 0"
-                ]
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -152,9 +106,11 @@
                 }
             ],
             "description": "Indexing und searching",
-            "transport-options": {
-                "relative": false
-            }
+            "support": {
+                "issues": "https://github.com/sitepark/atoolo-search/issues",
+                "source": "https://github.com/sitepark/atoolo-search/tree/feature/initial-implementation"
+            },
+            "time": "2024-01-18T08:35:10+00:00"
         },
         {
             "name": "halaxa/json-machine",
