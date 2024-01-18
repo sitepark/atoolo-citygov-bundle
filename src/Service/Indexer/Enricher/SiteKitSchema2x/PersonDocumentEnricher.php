@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Atoolo\CityGov\Service\Indexer\Enricher\SiteKitSchema21;
+namespace Atoolo\CityGov\Service\Indexer\Enricher\SiteKitSchema2x;
 
 use Atoolo\Resource\Resource;
 use Atoolo\Resource\ResourceLoader;

@@ -1,9 +1,9 @@
 <?php
 
-namespace Atoolo\CityGov\Test\Service\Indexer\Enricher\SiteKitSchema21;
+namespace Atoolo\CityGov\Test\Service\Indexer\Enricher\SiteKitSchema2x;
 
 // phpcs:ignore
-use Atoolo\CityGov\Service\Indexer\Enricher\SiteKitSchema21\ContactPointDocumentEnricher;
+use Atoolo\CityGov\Service\Indexer\Enricher\SiteKitSchema2x\ContactPointDocumentEnricher;
 use Atoolo\Resource\Resource;
 use Atoolo\Search\Service\Indexer\IndexSchema2xDocument;
 use PHPUnit\Framework\Attributes\CoversClass;

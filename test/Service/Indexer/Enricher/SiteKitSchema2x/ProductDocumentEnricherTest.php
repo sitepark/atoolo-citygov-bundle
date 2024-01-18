@@ -1,11 +1,11 @@
 <?php
 
-namespace Atoolo\CityGov\Test\Service\Indexer\Enricher\SiteKitSchema21;
+namespace Atoolo\CityGov\Test\Service\Indexer\Enricher\SiteKitSchema2x;
 
 // phpcs:ignore
-use Atoolo\CityGov\Service\Indexer\Enricher\SiteKitSchema21\OrganisationDocumentEnricher;
+use Atoolo\CityGov\Service\Indexer\Enricher\SiteKitSchema2x\OrganisationDocumentEnricher;
 // phpcs:ignore
-use Atoolo\CityGov\Service\Indexer\Enricher\SiteKitSchema21\ProductDocumentEnricher;
+use Atoolo\CityGov\Service\Indexer\Enricher\SiteKitSchema2x\ProductDocumentEnricher;
 use Atoolo\Resource\Exception\ResourceNotFoundException;
 use Atoolo\Resource\Resource;
 use Atoolo\Resource\ResourceLoader;
