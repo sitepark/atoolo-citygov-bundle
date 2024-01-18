@@ -1,0 +1,30 @@
+services:
+  atoolo.resource.citygovOrganisationHierarchyLoader:
+    class: Atoolo\Resource\Loader\SiteKitResourceHierarchyLoader
+    arguments:
+      - "@atoolo.resource.resourceLoader"
+      - "citygovOrganisation"
+
+  Atoolo\CityGov\Service\Indexer\Enricher\SiteKitSchema21\OrganisationDocumentEnricher:
+    arguments:
+      - '@atoolo.resource.citygovOrganisationHierarchyLoader'
+    tags:
+      - { name: 'atoolo.search.indexer.documentEnricher', priority: 10 }
+
+  Atoolo\CityGov\Service\Indexer\Enricher\SiteKitSchema21\ProductDocumentEnricher:
+    arguments:
+      - '@atoolo.resource.resourceLoader'
+      - '@Atoolo\CityGov\Service\Indexer\Enricher\SiteKitSchema21\OrganisationDocumentEnricher'
+    tags:
+      - { name: 'atoolo.search.indexer.documentEnricher', priority: 10 }
+
+  Atoolo\CityGov\Service\Indexer\Enricher\SiteKitSchema21\PersonDocumentEnricher:
+    arguments:
+      - '@atoolo.resource.resourceLoader'
+      - '@Atoolo\CityGov\Service\Indexer\Enricher\SiteKitSchema21\OrganisationDocumentEnricher'
+    tags:
+      - { name: 'atoolo.search.indexer.documentEnricher', priority: 10 }
+
+  Atoolo\CityGov\Service\Indexer\Enricher\SiteKitSchema21\ContactPointDocumentEnricher:
+    tags:
+      - { name: 'atoolo.search.indexer.documentEnricher', priority: 9 }
