@@ -76,12 +76,12 @@
             "dealerdirect/phpcodesniffer-composer-installer": true
         }
     },
-    "extra": {
-        "composer-link": {
-            "atoolo/search": {
-                "dev": false,
-                "version": "dev-feature/initial-implementation"
-            }
-        }
-    }
+	"archive": {
+		"exclude": [
+		"/*",
+		"/.*",
+		"!/composer.json",
+		"!/src"
+		]
+	}
 }

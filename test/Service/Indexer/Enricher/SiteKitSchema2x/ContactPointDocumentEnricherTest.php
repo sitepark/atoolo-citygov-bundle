@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Atoolo\CityGov\Test\Service\Indexer\Enricher\SiteKitSchema2x;
 
 // phpcs:ignore

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Atoolo\CityGov\Test\Service\Indexer\Enricher\SiteKitSchema2x;
 
 // phpcs:ignore
@@ -388,7 +390,7 @@ class PersonDocumentEnricherTest extends TestCase
         $organisationEnricher->expects($this->any())
             ->method('enrichOrganisationPath')
             ->willReturnCallback(function ($resource, $doc) {
-                $doc->sp_organisation = '12';
+                $doc->sp_organisation = 12;
                 return $doc;
             });
         $enricher = new PersonDocumentEnricher(

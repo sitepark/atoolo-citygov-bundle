@@ -18,7 +18,7 @@ class AtooloCityGovBundle extends Bundle
 {
     public function build(ContainerBuilder $container): void
     {
-        $configDir = __DIR__ . '/Resources/config';
+        $configDir = __DIR__ . '/../config';
 
         $loader = new GlobFileLoader(new FileLocator($configDir));
         $loader->setResolver(

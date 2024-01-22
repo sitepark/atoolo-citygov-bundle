@@ -74,14 +74,18 @@ class ContactPointDocumentEnricher implements DocumentEnricher
         $phoneList = [];
         $phoneListData = $contactPoint['contactData']['phoneList'] ?? [];
         foreach ($phoneListData as $phoneData) {
-            $phoneList[] = $phoneData['phone']['nationalNumber'];
+            if (isset($phoneData['phone']['nationalNumber'])) {
+                $phoneList[] = $phoneData['phone']['nationalNumber'];
+            }
         }
         $doc->sp_citygov_phone = $phoneList;
 
         $emailList = [];
         $emailListData = $contactPoint['contactData']['emailList'] ?? [];
         foreach ($emailListData as $emailData) {
-            $emailList[] = $emailData['email'];
+            if (isset($emailData['email'])) {
+                $emailList[] = $emailData['email'];
+            }
         }
         $doc->sp_citygov_email = $emailList;
 

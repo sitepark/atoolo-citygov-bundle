@@ -68,6 +68,11 @@ class PersonDocumentEnricher implements DocumentEnricher
 
         $doc->sp_citygov_firstname = $firstname;
         $doc->sp_citygov_lastname = $lastname;
+        /*
+         * Sort value with two search criteria. `aaa` ensures that, for example,
+         * `SchmittaaaOtto` and `SchmittmannaaaHans` are sorted so that
+         * `SchmittaaaOtto` is sorted first.
+         */
         $doc->sp_sortvalue = $lastname . 'aaa' . $firstname;
         if ($lastname !== '') {
             $doc->sp_citygov_startletter = mb_substr($lastname, 0, 1);
