@@ -81,6 +81,7 @@
 		"/*",
 		"/.*",
 		"!/composer.json",
+		"!/config",
 		"!/src"
 		]
 	}
