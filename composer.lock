@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "64ff83434dfddb4225946e91736353b9",
+    "content-hash": "417b813635f7c090f035f3c1dbfc8d52",
     "packages": [
         {
             "name": "atoolo/resource",
@@ -61,12 +61,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sitepark/atoolo-search.git",
-                "reference": "183eab0b2f7a2bc789d8a6ae47273a8325ae2e4d"
+                "reference": "f4c1751bc17734d2a1727670f2667da3f81415d1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sitepark/atoolo-search/zipball/183eab0b2f7a2bc789d8a6ae47273a8325ae2e4d",
-                "reference": "183eab0b2f7a2bc789d8a6ae47273a8325ae2e4d",
+                "url": "https://api.github.com/repos/sitepark/atoolo-search/zipball/f4c1751bc17734d2a1727670f2667da3f81415d1",
+                "reference": "f4c1751bc17734d2a1727670f2667da3f81415d1",
                 "shasum": ""
             },
             "require": {
@@ -110,7 +110,7 @@
                 "issues": "https://github.com/sitepark/atoolo-search/issues",
                 "source": "https://github.com/sitepark/atoolo-search/tree/feature/initial-implementation"
             },
-            "time": "2024-01-18T08:35:10+00:00"
+            "time": "2024-01-19T09:44:01+00:00"
         },
         {
             "name": "halaxa/json-machine",
@@ -3818,16 +3818,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "10.5.7",
+            "version": "10.5.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "e5c5b397a95cb0db013270a985726fcae93e61b8"
+                "reference": "08f4fa74d5fbfff1ef22abffee47aaedcaea227e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/e5c5b397a95cb0db013270a985726fcae93e61b8",
-                "reference": "e5c5b397a95cb0db013270a985726fcae93e61b8",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/08f4fa74d5fbfff1ef22abffee47aaedcaea227e",
+                "reference": "08f4fa74d5fbfff1ef22abffee47aaedcaea227e",
                 "shasum": ""
             },
             "require": {
@@ -3899,7 +3899,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/phpunit/issues",
                 "security": "https://github.com/sebastianbergmann/phpunit/security/policy",
-                "source": "https://github.com/sebastianbergmann/phpunit/tree/10.5.7"
+                "source": "https://github.com/sebastianbergmann/phpunit/tree/10.5.8"
             },
             "funding": [
                 {
@@ -3915,7 +3915,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-01-14T16:40:30+00:00"
+            "time": "2024-01-19T07:07:27+00:00"
         },
         {
             "name": "roave/security-advisories",
