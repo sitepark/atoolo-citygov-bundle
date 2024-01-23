@@ -8,9 +8,11 @@ namespace Atoolo\CityGov\Test\Service\Indexer\Enricher\SiteKitSchema2x;
 use Atoolo\CityGov\Service\Indexer\Enricher\SiteKitSchema2x\OrganisationDocumentEnricher;
 // phpcs:ignore
 use Atoolo\CityGov\Service\Indexer\Enricher\SiteKitSchema2x\PersonDocumentEnricher;
+use Atoolo\Resource\Exception\InvalidResourceException;
 use Atoolo\Resource\Exception\ResourceNotFoundException;
 use Atoolo\Resource\Resource;
 use Atoolo\Resource\ResourceLoader;
+use Atoolo\Search\Exception\DocumentEnrichingException;
 use Atoolo\Search\Service\Indexer\IndexSchema2xDocument;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
@@ -194,6 +196,29 @@ class PersonDocumentEnricherTest extends TestCase
         );
     }
 
+    public function testOrganisationWithException(): void
+    {
+        $this->expectException(DocumentEnrichingException::class);
+        $this->enrichDocument(
+            'citygovPerson',
+            [
+                'metadata' => [
+                    'citygovPerson' => [
+                        'membershipList' => [
+                            'items' => [
+                                [
+                                    'organisation' => [
+                                        'url' => 'throwException'
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        );
+    }
+
     public function testOrganisationToken(): void
     {
         $doc = $this->enrichDocument(
@@ -313,6 +338,29 @@ class PersonDocumentEnricherTest extends TestCase
         );
     }
 
+    public function testProductWithException(): void
+    {
+        $this->expectException(DocumentEnrichingException::class);
+        $this->enrichDocument(
+            'citygovPerson',
+            [
+                'metadata' => [
+                    'citygovPerson' => [
+                        'competenceList' => [
+                            'items' => [
+                                [
+                                    'product' => [
+                                        'url' => 'throwException'
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        );
+    }
+
     public function testFunction(): void
     {
         $doc = $this->enrichDocument(
@@ -376,6 +424,12 @@ class PersonDocumentEnricherTest extends TestCase
         $resourceLoader->expects($this->any())
             ->method('load')
             ->willReturnCallback(function ($location) use ($orga, $product) {
+                if ($location === 'throwException') {
+                    throw new InvalidResourceException(
+                        'throwException',
+                        'throw for test'
+                    );
+                }
                 if ($location === '/orga.php') {
                     return $orga;
                 }

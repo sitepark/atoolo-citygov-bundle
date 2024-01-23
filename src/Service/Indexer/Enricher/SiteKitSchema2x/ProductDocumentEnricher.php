@@ -6,13 +6,14 @@ namespace Atoolo\CityGov\Service\Indexer\Enricher\SiteKitSchema2x;
 
 use Atoolo\Resource\Resource;
 use Atoolo\Resource\ResourceLoader;
+use Atoolo\Search\Exception\DocumentEnrichingException;
 use Atoolo\Search\Service\Indexer\DocumentEnricher;
 use Atoolo\Search\Service\Indexer\IndexDocument;
 use Atoolo\Search\Service\Indexer\IndexSchema2xDocument;
+use Exception;
 
 /**
- * TODO
- * - sp_vv_alternativeTitle -> https://gitlab.sitepark.com/sitekit/citygov-php/-/blob/develop/php/SP/CityGov/Component/Initialization.php?ref_type=heads#L122
+ * TODO sp_vv_alternativeTitle -> https://gitlab.sitepark.com/sitekit/citygov-php/-/blob/develop/php/SP/CityGov/Component/Initialization.php?ref_type=heads#L122
  *
  * @phpstan-type Responsibility array{
  *       primary?: bool,
@@ -35,6 +36,9 @@ class ProductDocumentEnricher implements DocumentEnricher
         return true;
     }
 
+    /**
+     * @throws DocumentEnrichingException
+     */
     public function enrichDocument(
         Resource $resource,
         IndexDocument $doc,
@@ -67,6 +71,35 @@ class ProductDocumentEnricher implements DocumentEnricher
         }
         $doc->sp_sortvalue = $name;
 
+        try {
+            $doc = $this->enrichOrganisationPath($resource, $doc);
+        } catch (Exception $e) {
+            throw new DocumentEnrichingException(
+                $resource->getLocation(),
+                'Unable to enrich organisation_path for product',
+                0,
+                $e
+            );
+        }
+
+        $onlineServiceList = $resource->getData()->getArray(
+            'metadata.citygovProduct.onlineServices.serviceList'
+        );
+        if (!empty($onlineServiceList)) {
+            $doc->sp_contenttype = array_merge(
+                $doc->sp_contenttype ?? [],
+                ['citygovOnlineService']
+            );
+        }
+
+        return $doc;
+    }
+
+    private function enrichOrganisationPath(
+        Resource $resource,
+        IndexSchema2xDocument $doc
+    ): IndexSchema2xDocument {
+
         /** @var Responsibility[] $responsibilityList */
         $responsibilityList = $resource->getData()->getAssociativeArray(
             'metadata.citygovProduct.responsibilityList.items'
@@ -90,16 +123,6 @@ class ProductDocumentEnricher implements DocumentEnricher
                 $doc
             );
             break;
-        }
-
-        $onlineServiceList = $resource->getData()->getArray(
-            'metadata.citygovProduct.onlineServices.serviceList'
-        );
-        if (!empty($onlineServiceList)) {
-            $doc->sp_contenttype = array_merge(
-                $doc->sp_contenttype ?? [],
-                ['citygovOnlineService']
-            );
         }
 
         return $doc;

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Atoolo\CityGov\Service\Indexer\Enricher\SiteKitSchema2x;
 
 use Atoolo\Resource\Resource;
+use Atoolo\Search\Exception\DocumentEnrichingException;
 use Atoolo\Search\Service\Indexer\DocumentEnricher;
 use Atoolo\Search\Service\Indexer\IndexDocument;
 use Atoolo\Search\Service\Indexer\IndexSchema2xDocument;
@@ -38,6 +39,9 @@ class ContactPointDocumentEnricher implements DocumentEnricher
         return true;
     }
 
+    /**
+     * @throws DocumentEnrichingException
+     */
     public function enrichDocument(
         Resource $resource,
         IndexDocument $doc,

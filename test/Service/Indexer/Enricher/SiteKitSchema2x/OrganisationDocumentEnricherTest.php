@@ -1,13 +1,12 @@
 <?php
 
-declare(strict_types=1);
-
 namespace Atoolo\CityGov\Test\Service\Indexer\Enricher\SiteKitSchema2x;
 
 // phpcs:ignore
 use Atoolo\CityGov\Service\Indexer\Enricher\SiteKitSchema2x\OrganisationDocumentEnricher;
 use Atoolo\Resource\Loader\SiteKitResourceHierarchyLoader;
 use Atoolo\Resource\Resource;
+use Atoolo\Search\Exception\DocumentEnrichingException;
 use Atoolo\Search\Service\Indexer\IndexSchema2xDocument;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\Exception;
@@ -189,6 +188,39 @@ class OrganisationDocumentEnricherTest extends TestCase
             $doc->sp_organisation_path,
             'unexpected path'
         );
+    }
+
+    public function testOrgaPathWithException(): void
+    {
+        $hierarchyLoader = $this->createStub(
+            SiteKitResourceHierarchyLoader::class
+        );
+        $resource = new Resource(
+            '/12.php',
+            '12',
+            '12',
+            'citygovOrganisation',
+            [
+                'init' => [
+                    'id' => '12'
+                ]
+            ]
+        );
+
+        $hierarchyLoader
+            ->method('loadPath')
+            ->willThrowException(new DocumentEnrichingException(
+                'test',
+                'test'
+            ));
+
+        $enricher = new OrganisationDocumentEnricher(
+            $hierarchyLoader
+        );
+        $doc = $this->createMock(IndexSchema2xDocument::class);
+
+        $this->expectException(DocumentEnrichingException::class);
+        $enricher->enrichOrganisationPath($resource, $doc);
     }
 
     /**

@@ -6,13 +6,14 @@ namespace Atoolo\CityGov\Service\Indexer\Enricher\SiteKitSchema2x;
 
 use Atoolo\Resource\Loader\SiteKitResourceHierarchyLoader;
 use Atoolo\Resource\Resource;
+use Atoolo\Search\Exception\DocumentEnrichingException;
 use Atoolo\Search\Service\Indexer\DocumentEnricher;
 use Atoolo\Search\Service\Indexer\IndexDocument;
 use Atoolo\Search\Service\Indexer\IndexSchema2xDocument;
+use Exception;
 
 /**
- * TODO
- * - sp_vv_alternativeTitle -> https://gitlab.sitepark.com/sitekit/citygov-php/-/blob/develop/php/SP/CityGov/Component/Initialization.php?ref_type=heads#L122
+ * TODO sp_vv_alternativeTitle -> https://gitlab.sitepark.com/sitekit/citygov-php/-/blob/develop/php/SP/CityGov/Component/Initialization.php?ref_type=heads#L122
  * @implements DocumentEnricher<IndexSchema2xDocument>
  */
 class OrganisationDocumentEnricher implements DocumentEnricher
@@ -27,6 +28,9 @@ class OrganisationDocumentEnricher implements DocumentEnricher
         return true;
     }
 
+    /**
+     * @throws DocumentEnrichingException
+     */
     public function enrichDocument(
         Resource $resource,
         IndexDocument $doc,
@@ -40,6 +44,9 @@ class OrganisationDocumentEnricher implements DocumentEnricher
         return $this->enrichDocumentForOrganisation($resource, $doc);
     }
 
+    /**
+     * @throws DocumentEnrichingException
+     */
     private function enrichDocumentForOrganisation(
         Resource $resource,
         IndexSchema2xDocument $doc
@@ -66,19 +73,35 @@ class OrganisationDocumentEnricher implements DocumentEnricher
         return $this->enrichOrganisationPath($resource, $doc);
     }
 
+    /**
+     * @throws DocumentEnrichingException
+     */
     public function enrichOrganisationPath(
         Resource $resource,
         IndexSchema2xDocument $doc
     ): IndexSchema2xDocument {
         $doc->sp_organisation = (int)$resource->getId();
-        $organisationPath =
-            $this->hierarchyLoader->loadPath(
-                $resource->getLocation()
+
+        try {
+            $organisationPath =
+                $this->hierarchyLoader->loadPath(
+                    $resource->getLocation()
+                );
+            $organisationIdPath = array_map(static function ($resource) {
+                return (int)$resource->getId();
+            }, $organisationPath);
+            $doc->sp_organisation_path = array_merge(
+                $doc->sp_organisation_path ?? [],
+                $organisationIdPath
             );
-        $organisationIdPath = array_map(static function ($resource) {
-            return (int)$resource->getId();
-        }, $organisationPath);
-        $doc->sp_organisation_path = $organisationIdPath;
+        } catch (Exception $e) {
+            throw new DocumentEnrichingException(
+                $resource->getLocation(),
+                'Unable to enrich sp_organisation_path',
+                0,
+                $e
+            );
+        }
 
         return $doc;
     }
