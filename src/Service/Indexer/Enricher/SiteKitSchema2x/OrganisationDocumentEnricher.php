@@ -70,6 +70,12 @@ class OrganisationDocumentEnricher implements DocumentEnricher
         )];
         $doc->sp_sortvalue = $name;
 
+        $content = array_merge(
+            [$doc->content ?? ''],
+            $doc->sp_citygov_organisationtoken
+        );
+        $doc->content = trim(implode(' ', $content));
+
         return $this->enrichOrganisationPath($resource, $doc);
     }
 

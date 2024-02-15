@@ -380,7 +380,30 @@ class PersonDocumentEnricherTest extends TestCase
         $this->assertEquals(
             'FunctionName FunctionAppendix',
             $doc->sp_citygov_function,
-            'unexpected organisation'
+            'unexpected function'
+        );
+    }
+
+    public function testFunctionInContent(): void
+    {
+        $doc = $this->enrichDocument(
+            'citygovPerson',
+            [
+                'metadata' => [
+                    'citygovPerson' => [
+                        'function' => [
+                            'name' => 'FunctionName',
+                            'appendix' => 'FunctionAppendix'
+                        ]
+                    ]
+                ]
+            ]
+        );
+
+        $this->assertEquals(
+            'FunctionName FunctionAppendix',
+            $doc->content,
+            'unexpected function'
         );
     }
 

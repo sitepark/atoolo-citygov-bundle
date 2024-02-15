@@ -11,10 +11,10 @@ use Atoolo\Search\Service\Indexer\IndexDocument;
 use Atoolo\Search\Service\Indexer\IndexSchema2xDocument;
 
 /**
- * @phpstan-type Phone array{nationalNumber:string}
+ * @phpstan-type Phone array{nationalNumber?:string}
  * @phpstan-type PhoneData array{phone:Phone}
  * @phpstan-type PhoneList array<PhoneData>
- * @phpstan-type Email array{email:string}
+ * @phpstan-type Email array{email?:string}
  * @phpstan-type EmailList array<Email>
  * @phpstan-type ContactData array{
  *     phoneList?:PhoneList,

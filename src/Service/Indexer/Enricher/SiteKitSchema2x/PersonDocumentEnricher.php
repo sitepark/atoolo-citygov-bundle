@@ -119,6 +119,9 @@ class PersonDocumentEnricher implements DocumentEnricher
             $functionName . ' ' . $functionAppendix
         );
 
+        $content = ($doc->content ?? '') . ' ' . $doc->sp_citygov_function;
+        $doc->content = trim($content);
+
         return $doc;
     }
 

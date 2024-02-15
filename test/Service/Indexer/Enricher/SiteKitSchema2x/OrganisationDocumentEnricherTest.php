@@ -121,6 +121,27 @@ class OrganisationDocumentEnricherTest extends TestCase
         );
     }
 
+    public function testTokenInContent(): void
+    {
+        $doc = $this->enrichDocument(
+            'citygovOrganisation',
+            [
+                'metadata' => [
+                    'citygovOrganisation' => [
+                        'token' => '123'
+                    ]
+                ]
+            ]
+        );
+
+        $this->assertEquals(
+            '123',
+            $doc->content,
+            'unexpected token'
+        );
+    }
+
+
     /**
      * @throws Exception
      */
