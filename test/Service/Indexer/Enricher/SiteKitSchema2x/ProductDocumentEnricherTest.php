@@ -255,6 +255,40 @@ class ProductDocumentEnricherTest extends TestCase
             'unexpected contenttype'
         );
     }
+
+    public function testRichTextContent(): void
+    {
+        $doc = $this->enrichDocument(
+            'citygovProduct',
+            [
+                'metadata' => [
+                    'citygovProduct' => [
+                        'content' => [
+                            "info" => [
+                                "modelType" => "citygov.contentBlock",
+                                "id" => "info",
+                                "contentList" => [[
+                                    "modelType" => "content.text",
+                                    "richText" => [
+                                        "normalized" => true,
+                                        "modelType" => "html.richText",
+                                        "text" =>
+                                            "<p><span>Information</span></p>"
+                                    ]
+                                ]]
+                            ],
+                        ]
+                    ]
+                ]
+            ]
+        );
+
+        $this->assertEquals(
+            'Information',
+            $doc->content,
+            'unexpected content'
+        );
+    }
     private function enrichDocument(
         string $objectType,
         array $data

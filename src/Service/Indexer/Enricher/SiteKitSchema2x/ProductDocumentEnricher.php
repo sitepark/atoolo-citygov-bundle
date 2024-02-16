@@ -7,9 +7,11 @@ namespace Atoolo\CityGov\Service\Indexer\Enricher\SiteKitSchema2x;
 use Atoolo\Resource\Resource;
 use Atoolo\Resource\ResourceLoader;
 use Atoolo\Search\Exception\DocumentEnrichingException;
+use Atoolo\Search\Service\Indexer\ContentCollector;
 use Atoolo\Search\Service\Indexer\DocumentEnricher;
 use Atoolo\Search\Service\Indexer\IndexDocument;
 use Atoolo\Search\Service\Indexer\IndexSchema2xDocument;
+use Atoolo\Search\Service\Indexer\SiteKit\RichtTextMatcher;
 use Exception;
 
 /**
@@ -91,6 +93,35 @@ class ProductDocumentEnricher implements DocumentEnricher
                 ['citygovOnlineService']
             );
         }
+
+        $doc = $this->enrichContent($resource, $doc);
+
+        return $doc;
+    }
+
+    private function enrichContent(
+        Resource $resource,
+        IndexSchema2xDocument $doc
+    ): IndexSchema2xDocument {
+
+        $contentCollector = new ContentCollector([
+           new RichtTextMatcher()
+        ]);
+
+        $content = $contentCollector->collect(
+            $resource->getData()->getArray(
+                'metadata.citygovProduct.content'
+            )
+        );
+        $cleanContent = preg_replace(
+            '/\s+/',
+            ' ',
+            $content
+        );
+
+        $doc->content = trim(
+            ($doc->content ?? '') . ' ' . $cleanContent
+        );
 
         return $doc;
     }
