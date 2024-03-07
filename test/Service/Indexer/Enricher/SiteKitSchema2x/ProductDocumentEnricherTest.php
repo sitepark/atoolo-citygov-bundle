@@ -256,6 +256,36 @@ class ProductDocumentEnricherTest extends TestCase
         );
     }
 
+    public function testLeikaKeys(): void
+    {
+        $doc = $this->enrichDocument(
+            'citygovProduct',
+            [
+                'metadata' => [
+                    'citygovProduct' => [
+                        'leikaKeys' => [
+                            'leika1',
+                            'leika2'
+                        ]
+                    ]
+                ]
+            ]
+        );
+
+        /** @var array{sp_meta_string_leikanumber: string[]} $fields */
+        $fields = $doc->getFields();
+        print_r($fields);
+
+        $this->assertEquals(
+            [
+                'leika1',
+                'leika2'
+            ],
+            $fields['sp_meta_string_leikanumber'],
+            'unexpected leikaKeys'
+        );
+    }
+
     public function testRichTextContent(): void
     {
         $doc = $this->enrichDocument(
@@ -339,7 +369,7 @@ class ProductDocumentEnricherTest extends TestCase
             $resourceLoader,
             $organisationEnricher
         );
-        $doc = $this->createMock(IndexSchema2xDocument::class);
+        $doc = new IndexSchema2xDocument();
 
         $resource = new Resource(
             'test',

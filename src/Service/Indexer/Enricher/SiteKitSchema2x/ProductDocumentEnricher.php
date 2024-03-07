@@ -94,6 +94,14 @@ class ProductDocumentEnricher implements DocumentEnricher
             );
         }
 
+        /** @var string[] $leikaKeys */
+        $leikaKeys = $resource->getData()->getArray(
+            'metadata.citygovProduct.leikaKeys'
+        );
+        if (!empty($leikaKeys)) {
+            $doc->setMetaString('leikanumber', $leikaKeys);
+        }
+
         $doc = $this->enrichContent($resource, $doc);
 
         return $doc;
