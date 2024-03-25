@@ -81,9 +81,14 @@ class PersonDocumentEnricher implements DocumentEnricher
          * `SchmittaaaOtto` and `SchmittmannaaaHans` are sorted so that
          * `SchmittaaaOtto` is sorted first.
          */
-        $doc->sp_sortvalue = $lastname . 'aaa' . $firstname;
+        $sortName = str_replace(
+            ["ä","ö","ü", "Ä","Ö","Ü"],
+            ["ae", "oe", "ue", "Ae", "Oe", "Ue"],
+            $lastname . 'aaa' . $firstname
+        );
+        $doc->sp_sortvalue = $sortName;
         if ($lastname !== '') {
-            $doc->sp_citygov_startletter = mb_substr($lastname, 0, 1);
+            $doc->sp_citygov_startletter = mb_substr($sortName, 0, 1);
         }
 
         try {

@@ -59,16 +59,21 @@ class OrganisationDocumentEnricher implements DocumentEnricher
 
         $doc->keywords = array_merge($doc->keywords ?? [], $synonymList);
 
-        $name = $resource->getData()->getString(
-            'metadata.citygovOrganisation.name'
+        $name = str_replace(
+            ["ä","ö","ü", "Ä","Ö","Ü"],
+            ["ae", "oe", "ue", "Ae", "Oe", "Ue"],
+            $resource->getData()->getString(
+                'metadata.citygovOrganisation.name'
+            )
         );
+        $doc->sp_sortvalue = $name;
         if (!empty($name)) {
             $doc->sp_citygov_startletter = mb_substr($name, 0, 1);
         }
+
         $doc->sp_citygov_organisationtoken = [$resource->getData()->getString(
             'metadata.citygovOrganisation.token'
         )];
-        $doc->sp_sortvalue = $name;
 
         $content = array_merge(
             [$doc->content ?? ''],

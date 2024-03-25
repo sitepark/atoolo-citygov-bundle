@@ -67,7 +67,11 @@ class ProductDocumentEnricher implements DocumentEnricher
             $doc->keywords = array_merge($doc->keywords ?? [], $synonymList);
         }
 
-        $name = $resource->getData()->getString('metadata.citygovProduct.name');
+        $name = str_replace(
+            ["ä","ö","ü", "Ä","Ö","Ü"],
+            ["ae", "oe", "ue", "Ae", "Oe", "Ue"],
+            $resource->getData()->getString('metadata.citygovProduct.name')
+        );
         if (!empty($name)) {
             $doc->sp_citygov_startletter = mb_substr($name, 0, 1);
         }
