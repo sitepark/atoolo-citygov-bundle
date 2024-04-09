@@ -54,10 +54,15 @@ class ProductDocumentEnricher implements DocumentEnricher
         return $this->enrichDocumentForProduct($resource, $doc);
     }
 
+    /**
+     * @template E of IndexSchema2xDocument
+     * @param E $doc
+     * @return E
+     */
     private function enrichDocumentForProduct(
         Resource $resource,
-        IndexSchema2xDocument $doc
-    ): IndexSchema2xDocument {
+        IndexDocument $doc
+    ): IndexDocument {
 
         /** @var string[] $synonymList */
         $synonymList = $resource->getData()->getArray(
@@ -111,10 +116,15 @@ class ProductDocumentEnricher implements DocumentEnricher
         return $doc;
     }
 
+    /**
+     * @template E of IndexSchema2xDocument
+     * @param E $doc
+     * @return E
+     */
     private function enrichContent(
         Resource $resource,
-        IndexSchema2xDocument $doc
-    ): IndexSchema2xDocument {
+        IndexDocument $doc
+    ): IndexDocument {
 
         $contentCollector = new ContentCollector([
            new RichtTextMatcher()
@@ -138,10 +148,15 @@ class ProductDocumentEnricher implements DocumentEnricher
         return $doc;
     }
 
+    /**
+     * @template E of IndexSchema2xDocument
+     * @param E $doc
+     * @return E
+     */
     private function enrichOrganisationPath(
         Resource $resource,
-        IndexSchema2xDocument $doc
-    ): IndexSchema2xDocument {
+        IndexDocument $doc
+    ): IndexDocument {
 
         /** @var Responsibility[] $responsibilityList */
         $responsibilityList = $resource->getData()->getAssociativeArray(

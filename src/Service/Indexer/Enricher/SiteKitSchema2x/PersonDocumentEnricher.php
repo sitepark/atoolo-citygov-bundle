@@ -60,12 +60,14 @@ class PersonDocumentEnricher implements DocumentEnricher
     }
 
     /**
-     * @throws DocumentEnrichingException
+     * @template E of IndexSchema2xDocument
+     * @param E $doc
+     * @return E
      */
     private function enrichDocumentForPerson(
         Resource $resource,
-        IndexSchema2xDocument $doc
-    ): IndexSchema2xDocument {
+        IndexDocument $doc
+    ): IndexDocument {
 
         $firstname = $resource->getData()->getString(
             'metadata.citygovPerson.firstname'
@@ -131,12 +133,14 @@ class PersonDocumentEnricher implements DocumentEnricher
     }
 
     /**
-     * @throws DocumentEnrichingException
+     * @template E of IndexSchema2xDocument
+     * @param E $doc
+     * @return E
      */
     private function enrichPersonOrganisations(
         Resource $resource,
-        IndexSchema2xDocument $doc
-    ): IndexSchema2xDocument {
+        IndexDocument $doc
+    ): IndexDocument {
         /** @var Membership[] $membershipList */
         $membershipList = $resource->getData()->getArray(
             'metadata.citygovPerson.membershipList.items'
@@ -191,10 +195,15 @@ class PersonDocumentEnricher implements DocumentEnricher
         return $doc;
     }
 
+    /**
+     * @template E of IndexSchema2xDocument
+     * @param E $doc
+     * @return E
+     */
     private function enrichPersonProducts(
         Resource $resource,
-        IndexSchema2xDocument $doc
-    ): IndexSchema2xDocument {
+        IndexDocument $doc
+    ): IndexDocument {
 
         /** @var Competence[] $competenceList */
         $competenceList = $resource->getData()->getArray(

@@ -45,12 +45,14 @@ class OrganisationDocumentEnricher implements DocumentEnricher
     }
 
     /**
-     * @throws DocumentEnrichingException
+     * @template E of IndexSchema2xDocument
+     * @param E $doc
+     * @return E
      */
     private function enrichDocumentForOrganisation(
         Resource $resource,
-        IndexSchema2xDocument $doc
-    ): IndexSchema2xDocument {
+        IndexDocument $doc
+    ): IndexDocument {
 
         /** @var string[] $synonymList */
         $synonymList = $resource->getData()->getArray(
@@ -85,17 +87,19 @@ class OrganisationDocumentEnricher implements DocumentEnricher
     }
 
     /**
-     * @throws DocumentEnrichingException
+     * @template E of IndexSchema2xDocument
+     * @param E $doc
+     * @return E
      */
     public function enrichOrganisationPath(
         Resource $resource,
-        IndexSchema2xDocument $doc
-    ): IndexSchema2xDocument {
+        IndexDocument $doc
+    ): IndexDocument {
         $doc->sp_organisation = (int)$resource->getId();
 
         try {
             $organisationPath =
-                $this->hierarchyLoader->loadPath(
+                $this->hierarchyLoader->loadPrimaryPath(
                     $resource->getLocation()
                 );
             $organisationIdPath = array_map(static function ($resource) {

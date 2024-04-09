@@ -66,14 +66,15 @@ class ContactPointDocumentEnricher implements DocumentEnricher
     }
 
     /**
+     * @template E of IndexSchema2xDocument
      * @param ContactPoint $contactPoint
-     * @param IndexSchema2xDocument $doc
-     * @return IndexSchema2xDocument
+     * @param E $doc
+     * @return E
      */
     private function enrichDocumentForContactPoint(
         array $contactPoint,
-        IndexSchema2xDocument $doc
-    ): IndexSchema2xDocument {
+        IndexDocument $doc
+    ): IndexDocument {
 
         $phoneList = [];
         $phoneListData = $contactPoint['contactData']['phoneList'] ?? [];
