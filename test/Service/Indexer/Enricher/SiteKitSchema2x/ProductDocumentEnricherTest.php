@@ -22,25 +22,6 @@ use Solarium\Core\Query\DocumentInterface;
 
 class ProductDocumentEnricherTest extends TestCase
 {
-    public function testIsIndexable(): void
-    {
-        $resourceLoader = $this->createStub(
-            ResourceLoader::class
-        );
-        $organisationEnricher = $this->createStub(
-            OrganisationDocumentEnricher::class
-        );
-        $enricher = new ProductDocumentEnricher(
-            $resourceLoader,
-            $organisationEnricher
-        );
-        $resource = $this->createMock(Resource::class);
-        self::assertTrue(
-            $enricher->isIndexable($resource),
-            "should not mark any resource as not indexable"
-        );
-    }
-
     public function testObjectType(): void
     {
         $doc = $this->enrichDocument(
@@ -50,7 +31,7 @@ class ProductDocumentEnricherTest extends TestCase
 
         $this->assertEquals(
             [],
-            get_object_vars($doc),
+            $doc->getFields(),
             'document should be empty'
         );
     }
@@ -332,6 +313,7 @@ class ProductDocumentEnricherTest extends TestCase
             '12',
             'orga',
             'citygovOrganisation',
+            '',
             [
                 'metadata' => [
                     'citygovOrganisation' => [
@@ -376,6 +358,7 @@ class ProductDocumentEnricherTest extends TestCase
             'test',
             'test',
             $objectType,
+            '',
             $data
         );
 

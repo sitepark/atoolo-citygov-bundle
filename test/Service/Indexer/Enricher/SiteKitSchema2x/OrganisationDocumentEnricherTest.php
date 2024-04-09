@@ -20,24 +20,6 @@ class OrganisationDocumentEnricherTest extends TestCase
     /**
      * @throws Exception
      */
-    public function testIsIndexable(): void
-    {
-        $hierarchyLoader = $this->createStub(
-            SiteKitResourceHierarchyLoader::class
-        );
-        $enricher = new OrganisationDocumentEnricher(
-            $hierarchyLoader
-        );
-        $resource = $this->createMock(Resource::class);
-        self::assertTrue(
-            $enricher->isIndexable($resource),
-            "should not mark any resource as not indexable"
-        );
-    }
-
-    /**
-     * @throws Exception
-     */
     public function testObjectType(): void
     {
         $doc = $this->enrichDocument(
@@ -223,6 +205,7 @@ class OrganisationDocumentEnricherTest extends TestCase
             '12',
             '12',
             'citygovOrganisation',
+            '',
             [
                 'init' => [
                     'id' => '12'
@@ -231,7 +214,7 @@ class OrganisationDocumentEnricherTest extends TestCase
         );
 
         $hierarchyLoader
-            ->method('loadPath')
+            ->method('loadPrimaryPath')
             ->willThrowException(new DocumentEnrichingException(
                 'test',
                 'test'
@@ -266,6 +249,7 @@ class OrganisationDocumentEnricherTest extends TestCase
             'test',
             'test',
             $objectType,
+            '',
             $data
         );
 
@@ -286,6 +270,7 @@ class OrganisationDocumentEnricherTest extends TestCase
             '12',
             '12',
             'citygovOrganisation',
+            '',
             [
                 'init' => [
                     'id' => '12'
@@ -297,6 +282,7 @@ class OrganisationDocumentEnricherTest extends TestCase
             '123',
             '123',
             'citygovOrganisation',
+            '',
             array_merge(
                 [
                     'init' => [
@@ -308,7 +294,7 @@ class OrganisationDocumentEnricherTest extends TestCase
         );
 
         $hierarchyLoader
-            ->method('loadPath')
+            ->method('loadPrimaryPath')
             ->willReturn([$resource12, $resource123]);
 
         $enricher = new OrganisationDocumentEnricher(

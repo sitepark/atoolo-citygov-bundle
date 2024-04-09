@@ -38,11 +38,6 @@ class PersonDocumentEnricher implements DocumentEnricher
     ) {
     }
 
-    public function isIndexable(Resource $resource): bool
-    {
-        return true;
-    }
-
     /**
      * @throws DocumentEnrichingException
      */

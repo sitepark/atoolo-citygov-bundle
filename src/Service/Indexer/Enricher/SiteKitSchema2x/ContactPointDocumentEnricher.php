@@ -34,11 +34,6 @@ use Atoolo\Search\Service\Indexer\IndexSchema2xDocument;
  */
 class ContactPointDocumentEnricher implements DocumentEnricher
 {
-    public function isIndexable(Resource $resource): bool
-    {
-        return true;
-    }
-
     /**
      * @throws DocumentEnrichingException
      */
