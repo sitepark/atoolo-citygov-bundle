@@ -11,7 +11,6 @@
     ],
     "require": {
         "php": ">=8.1 <8.4.0",
-        "atoolo/resource": "dev-feature/resource-channel",
         "atoolo/search": "dev-feature/core-name",
         "symfony/config": "^6.3 || ^7.0",
         "symfony/dependency-injection": "^6.3 || ^7.0",

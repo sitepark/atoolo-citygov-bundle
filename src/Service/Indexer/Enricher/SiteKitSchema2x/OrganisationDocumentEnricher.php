@@ -32,7 +32,7 @@ class OrganisationDocumentEnricher implements DocumentEnricher
         string $processId
     ): IndexDocument {
 
-        if ($resource->getObjectType() !== 'citygovOrganisation') {
+        if ($resource->objectType !== 'citygovOrganisation') {
             return $doc;
         }
 
@@ -50,7 +50,7 @@ class OrganisationDocumentEnricher implements DocumentEnricher
     ): IndexDocument {
 
         /** @var string[] $synonymList */
-        $synonymList = $resource->getData()->getArray(
+        $synonymList = $resource->data->getArray(
             'metadata.citygovOrganisation.synonymList'
         );
 
@@ -59,7 +59,7 @@ class OrganisationDocumentEnricher implements DocumentEnricher
         $name = str_replace(
             ["ä","ö","ü", "Ä","Ö","Ü"],
             ["ae", "oe", "ue", "Ae", "Oe", "Ue"],
-            $resource->getData()->getString(
+            $resource->data->getString(
                 'metadata.citygovOrganisation.name'
             )
         );
@@ -68,7 +68,7 @@ class OrganisationDocumentEnricher implements DocumentEnricher
             $doc->sp_citygov_startletter = mb_substr($name, 0, 1);
         }
 
-        $doc->sp_citygov_organisationtoken = [$resource->getData()->getString(
+        $doc->sp_citygov_organisationtoken = [$resource->data->getString(
             'metadata.citygovOrganisation.token'
         )];
 
@@ -90,15 +90,15 @@ class OrganisationDocumentEnricher implements DocumentEnricher
         Resource $resource,
         IndexDocument $doc
     ): IndexDocument {
-        $doc->sp_organisation = (int)$resource->getId();
+        $doc->sp_organisation = (int)$resource->id;
 
         try {
             $organisationPath =
                 $this->hierarchyLoader->loadPrimaryPath(
-                    $resource->getLocation()
+                    $resource->toLocation()
                 );
             $organisationIdPath = array_map(static function ($resource) {
-                return (int)$resource->getId();
+                return (int)$resource->id;
             }, $organisationPath);
             $doc->sp_organisation_path = array_merge(
                 $doc->sp_organisation_path ?? [],
@@ -106,7 +106,7 @@ class OrganisationDocumentEnricher implements DocumentEnricher
             );
         } catch (Exception $e) {
             throw new DocumentEnrichingException(
-                $resource->getLocation(),
+                $resource->toLocation(),
                 'Unable to enrich sp_organisation_path',
                 0,
                 $e

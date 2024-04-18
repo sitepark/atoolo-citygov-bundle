@@ -6,8 +6,10 @@ namespace Atoolo\CityGov\Test\Service\Indexer\Enricher\SiteKitSchema2x;
 
 // phpcs:ignore
 use Atoolo\CityGov\Service\Indexer\Enricher\SiteKitSchema2x\OrganisationDocumentEnricher;
+use Atoolo\CityGov\Test\TestResourceFactory;
 use Atoolo\Resource\Loader\SiteKitResourceHierarchyLoader;
 use Atoolo\Resource\Resource;
+use Atoolo\Resource\ResourceLocation;
 use Atoolo\Search\Exception\DocumentEnrichingException;
 use Atoolo\Search\Service\Indexer\IndexSchema2xDocument;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -22,10 +24,9 @@ class OrganisationDocumentEnricherTest extends TestCase
      */
     public function testObjectType(): void
     {
-        $doc = $this->enrichDocument(
-            'content',
-            []
-        );
+        $doc = $this->enrichDocument([
+            'objectType' => 'content',
+        ]);
 
         $this->assertEquals(
             [],
@@ -39,16 +40,14 @@ class OrganisationDocumentEnricherTest extends TestCase
      */
     public function testSynonymList(): void
     {
-        $doc = $this->enrichDocument(
-            'citygovOrganisation',
-            [
-                'metadata' => [
-                    'citygovOrganisation' => [
-                        'synonymList' => ['blue', 'red']
-                    ]
+        $doc = $this->enrichDocument([
+            'objectType' => 'citygovOrganisation',
+            'metadata' => [
+                'citygovOrganisation' => [
+                    'synonymList' => ['blue', 'red']
                 ]
             ]
-        );
+        ]);
 
         $this->assertEquals(
             ['blue', 'red'],
@@ -62,16 +61,14 @@ class OrganisationDocumentEnricherTest extends TestCase
      */
     public function testStartLetter(): void
     {
-        $doc = $this->enrichDocument(
-            'citygovOrganisation',
-            [
-                'metadata' => [
-                    'citygovOrganisation' => [
-                        'name' => 'Orga'
-                    ]
+        $doc = $this->enrichDocument([
+            'objectType' => 'citygovOrganisation',
+            'metadata' => [
+                'citygovOrganisation' => [
+                    'name' => 'Orga'
                 ]
             ]
-        );
+        ]);
 
         $this->assertEquals(
             'O',
@@ -85,16 +82,14 @@ class OrganisationDocumentEnricherTest extends TestCase
      */
     public function testToken(): void
     {
-        $doc = $this->enrichDocument(
-            'citygovOrganisation',
-            [
-                'metadata' => [
-                    'citygovOrganisation' => [
-                        'token' => '123'
-                    ]
+        $doc = $this->enrichDocument([
+            'objectType' => 'citygovOrganisation',
+            'metadata' => [
+                'citygovOrganisation' => [
+                    'token' => '123'
                 ]
             ]
-        );
+        ]);
 
         $this->assertEquals(
             ['123'],
@@ -105,16 +100,14 @@ class OrganisationDocumentEnricherTest extends TestCase
 
     public function testTokenInContent(): void
     {
-        $doc = $this->enrichDocument(
-            'citygovOrganisation',
-            [
-                'metadata' => [
-                    'citygovOrganisation' => [
-                        'token' => '123'
-                    ]
+        $doc = $this->enrichDocument([
+            'objectType' => 'citygovOrganisation',
+            'metadata' => [
+                'citygovOrganisation' => [
+                    'token' => '123'
                 ]
             ]
-        );
+        ]);
 
         $this->assertEquals(
             '123',
@@ -129,16 +122,14 @@ class OrganisationDocumentEnricherTest extends TestCase
      */
     public function testSortvalue(): void
     {
-        $doc = $this->enrichDocument(
-            'citygovOrganisation',
-            [
-                'metadata' => [
-                    'citygovOrganisation' => [
-                        'name' => 'Orga'
-                    ]
+        $doc = $this->enrichDocument([
+            'objectType' => 'citygovOrganisation',
+            'metadata' => [
+                'citygovOrganisation' => [
+                    'name' => 'Orga'
                 ]
             ]
-        );
+        ]);
 
         $this->assertEquals(
             'Orga',
@@ -154,9 +145,7 @@ class OrganisationDocumentEnricherTest extends TestCase
     {
         $doc = $this->enrichOrganisationPath(
             [
-                'init' => [
-                    'id' => 123
-                ]
+                'id' => '123'
             ]
         );
 
@@ -200,23 +189,17 @@ class OrganisationDocumentEnricherTest extends TestCase
         $hierarchyLoader = $this->createStub(
             SiteKitResourceHierarchyLoader::class
         );
-        $resource = new Resource(
-            '/12.php',
-            '12',
-            '12',
-            'citygovOrganisation',
-            '',
-            [
-                'init' => [
-                    'id' => '12'
-                ]
-            ]
-        );
+        $resource = TestResourceFactory::create([
+            'url' => '/12.php',
+            'id' => '12',
+            'name' => '12',
+            'objectType' => 'citygovOrganisation',
+        ]);
 
         $hierarchyLoader
             ->method('loadPrimaryPath')
             ->willThrowException(new DocumentEnrichingException(
-                'test',
+                ResourceLocation::of('test'),
                 'test'
             ));
 
@@ -233,7 +216,6 @@ class OrganisationDocumentEnricherTest extends TestCase
      * @throws Exception
      */
     private function enrichDocument(
-        string $objectType,
         array $data
     ): IndexSchema2xDocument {
         $hierarchyLoader = $this->createStub(
@@ -244,14 +226,7 @@ class OrganisationDocumentEnricherTest extends TestCase
         );
         $doc = $this->createMock(IndexSchema2xDocument::class);
 
-        $resource = new Resource(
-            'test',
-            'test',
-            'test',
-            $objectType,
-            '',
-            $data
-        );
+        $resource = TestResourceFactory::create($data);
 
         return $enricher->enrichDocument($resource, $doc, '');
     }
@@ -265,33 +240,18 @@ class OrganisationDocumentEnricherTest extends TestCase
         $hierarchyLoader = $this->createStub(
             SiteKitResourceHierarchyLoader::class
         );
-        $resource12 = new Resource(
-            '/12.php',
-            '12',
-            '12',
-            'citygovOrganisation',
-            '',
-            [
-                'init' => [
-                    'id' => '12'
-                ]
-            ]
-        );
-        $resource123 = new Resource(
-            '/123.php',
-            '123',
-            '123',
-            'citygovOrganisation',
-            '',
-            array_merge(
-                [
-                    'init' => [
-                        'id' => '123'
-                    ]
-                ],
-                $data
-            )
-        );
+        $resource12 = TestResourceFactory::create(array_merge([
+            'url' => '/12.php',
+            'id' => '12',
+            'name' => '12',
+            'objectType' => 'citygovOrganisation',
+        ], $data));
+        $resource123 = TestResourceFactory::create(array_merge([
+            'url' => '/123.php',
+            'id' => '123',
+            'name' => '123',
+            'objectType' => 'citygovOrganisation',
+        ], $data));
 
         $hierarchyLoader
             ->method('loadPrimaryPath')

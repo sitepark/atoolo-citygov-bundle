@@ -44,14 +44,14 @@ class ContactPointDocumentEnricher implements DocumentEnricher
     ): IndexDocument {
 
         if (
-            $resource->getObjectType() !== 'citygovOrganisation'
-            && $resource->getObjectType() !== 'citygovPerson'
+            $resource->objectType !== 'citygovOrganisation'
+            && $resource->objectType !== 'citygovPerson'
         ) {
             return $doc;
         }
 
         /** @var ContactPoint $contactPoint */
-        $contactPoint = $resource->getData()->getAssociativeArray(
+        $contactPoint = $resource->data->getAssociativeArray(
             'metadata.contactPoint'
         );
         return $this->enrichDocumentForContactPoint(

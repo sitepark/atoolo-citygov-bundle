@@ -6,6 +6,7 @@ namespace Atoolo\CityGov\Service\Indexer\Enricher\SiteKitSchema2x;
 
 use Atoolo\Resource\Resource;
 use Atoolo\Resource\ResourceLoader;
+use Atoolo\Resource\ResourceLocation;
 use Atoolo\Search\Exception\DocumentEnrichingException;
 use Atoolo\Search\Service\Indexer\DocumentEnricher;
 use Atoolo\Search\Service\Indexer\IndexDocument;
@@ -47,7 +48,7 @@ class PersonDocumentEnricher implements DocumentEnricher
         string $processId
     ): IndexDocument {
 
-        if ($resource->getObjectType() !== 'citygovPerson') {
+        if ($resource->objectType !== 'citygovPerson') {
             return $doc;
         }
 
@@ -64,10 +65,10 @@ class PersonDocumentEnricher implements DocumentEnricher
         IndexDocument $doc
     ): IndexDocument {
 
-        $firstname = $resource->getData()->getString(
+        $firstname = $resource->data->getString(
             'metadata.citygovPerson.firstname'
         );
-        $lastname = $resource->getData()->getString(
+        $lastname = $resource->data->getString(
             'metadata.citygovPerson.lastname'
         );
 
@@ -92,7 +93,7 @@ class PersonDocumentEnricher implements DocumentEnricher
             $doc = $this->enrichPersonOrganisations($resource, $doc);
         } catch (Exception $e) {
             throw new DocumentEnrichingException(
-                $resource->getLocation(),
+                $resource->toLocation(),
                 'Unable to enrich organisation for person',
                 0,
                 $e
@@ -103,17 +104,17 @@ class PersonDocumentEnricher implements DocumentEnricher
             $doc = $this->enrichPersonProducts($resource, $doc);
         } catch (Exception $e) {
             throw new DocumentEnrichingException(
-                $resource->getLocation(),
+                $resource->toLocation(),
                 'Unable to enrich products for person',
                 0,
                 $e
             );
         }
 
-        $functionName = $resource->getData()->getString(
+        $functionName = $resource->data->getString(
             'metadata.citygovPerson.function.name'
         );
-        $functionAppendix = $resource->getData()->getString(
+        $functionAppendix = $resource->data->getString(
             'metadata.citygovPerson.function.appendix'
         );
 
@@ -137,7 +138,7 @@ class PersonDocumentEnricher implements DocumentEnricher
         IndexDocument $doc
     ): IndexDocument {
         /** @var Membership[] $membershipList */
-        $membershipList = $resource->getData()->getArray(
+        $membershipList = $resource->data->getArray(
             'metadata.citygovPerson.membershipList.items'
         );
         /** @var array<array<string>> $organisationNameMergeList */
@@ -152,23 +153,23 @@ class PersonDocumentEnricher implements DocumentEnricher
             }
 
             $organisationResource = $this->resourceLoader->load(
-                $organisationLocation
+                ResourceLocation::of($organisationLocation, $resource->lang)
             );
 
             $organisationNameMergeList[] = [
-                $organisationResource->getData()->getString(
+                $organisationResource->data->getString(
                     'metadata.citygovOrganisation.name'
                 )
             ];
 
-            $token = $organisationResource->getData()->getString(
+            $token = $organisationResource->data->getString(
                 'metadata.citygovOrganisation.token'
             );
             if (!empty($token)) {
                 $organisationTokenList[] = str_replace('.', ' ', $token);
             }
 
-            $synonymList = $organisationResource->getData()->getArray(
+            $synonymList = $organisationResource->data->getArray(
                 'metadata.citygovOrganisation.synonymList'
             );
             $organisationNameMergeList[] = $synonymList;
@@ -201,7 +202,7 @@ class PersonDocumentEnricher implements DocumentEnricher
     ): IndexDocument {
 
         /** @var Competence[] $competenceList */
-        $competenceList = $resource->getData()->getArray(
+        $competenceList = $resource->data->getArray(
             'metadata.citygovPerson.competenceList.items'
         );
         $productNameMergeList = [];
@@ -211,15 +212,20 @@ class PersonDocumentEnricher implements DocumentEnricher
             if ($productLocation === null) {
                 continue;
             }
-            $productResource = $this->resourceLoader->load($productLocation);
+            $productResource = $this->resourceLoader->load(
+                ResourceLocation::of(
+                    $productLocation,
+                    $resource->lang
+                )
+            );
 
             $productNameMergeList[] = [
-                $productResource->getData()->getString(
+                $productResource->data->getString(
                     'metadata.citygovProduct.name'
                 )
             ];
 
-            $synonymList = $productResource->getData()->getArray(
+            $synonymList = $productResource->data->getArray(
                 'metadata.citygovProduct.synonymList'
             );
             $productNameMergeList[] = $synonymList;

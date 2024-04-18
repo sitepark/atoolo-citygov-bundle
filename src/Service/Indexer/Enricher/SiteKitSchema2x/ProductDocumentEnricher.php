@@ -6,6 +6,7 @@ namespace Atoolo\CityGov\Service\Indexer\Enricher\SiteKitSchema2x;
 
 use Atoolo\Resource\Resource;
 use Atoolo\Resource\ResourceLoader;
+use Atoolo\Resource\ResourceLocation;
 use Atoolo\Search\Exception\DocumentEnrichingException;
 use Atoolo\Search\Service\Indexer\ContentCollector;
 use Atoolo\Search\Service\Indexer\DocumentEnricher;
@@ -42,7 +43,7 @@ class ProductDocumentEnricher implements DocumentEnricher
         string $processId
     ): IndexDocument {
 
-        if ($resource->getObjectType() !== 'citygovProduct') {
+        if ($resource->objectType !== 'citygovProduct') {
             return $doc;
         }
 
@@ -60,7 +61,7 @@ class ProductDocumentEnricher implements DocumentEnricher
     ): IndexDocument {
 
         /** @var string[] $synonymList */
-        $synonymList = $resource->getData()->getArray(
+        $synonymList = $resource->data->getArray(
             'metadata.citygovProduct.synonymList'
         );
         if (!empty($synonymList)) {
@@ -70,7 +71,7 @@ class ProductDocumentEnricher implements DocumentEnricher
         $name = str_replace(
             ["ä","ö","ü", "Ä","Ö","Ü"],
             ["ae", "oe", "ue", "Ae", "Oe", "Ue"],
-            $resource->getData()->getString('metadata.citygovProduct.name')
+            $resource->data->getString('metadata.citygovProduct.name')
         );
         if (!empty($name)) {
             $doc->sp_citygov_startletter = mb_substr($name, 0, 1);
@@ -81,14 +82,14 @@ class ProductDocumentEnricher implements DocumentEnricher
             $doc = $this->enrichOrganisationPath($resource, $doc);
         } catch (Exception $e) {
             throw new DocumentEnrichingException(
-                $resource->getLocation(),
+                $resource->toLocation(),
                 'Unable to enrich organisation_path for product',
                 0,
                 $e
             );
         }
 
-        $onlineServiceList = $resource->getData()->getArray(
+        $onlineServiceList = $resource->data->getArray(
             'metadata.citygovProduct.onlineServices.serviceList'
         );
         if (!empty($onlineServiceList)) {
@@ -99,7 +100,7 @@ class ProductDocumentEnricher implements DocumentEnricher
         }
 
         /** @var string[] $leikaKeys */
-        $leikaKeys = $resource->getData()->getArray(
+        $leikaKeys = $resource->data->getArray(
             'metadata.citygovProduct.leikaKeys'
         );
         if (!empty($leikaKeys)) {
@@ -126,7 +127,7 @@ class ProductDocumentEnricher implements DocumentEnricher
         ]);
 
         $content = $contentCollector->collect(
-            $resource->getData()->getArray(
+            $resource->data->getArray(
                 'metadata.citygovProduct.content'
             )
         );
@@ -154,7 +155,7 @@ class ProductDocumentEnricher implements DocumentEnricher
     ): IndexDocument {
 
         /** @var Responsibility[] $responsibilityList */
-        $responsibilityList = $resource->getData()->getAssociativeArray(
+        $responsibilityList = $resource->data->getAssociativeArray(
             'metadata.citygovProduct.responsibilityList.items'
         );
         foreach ($responsibilityList as $responsibility) {
@@ -169,7 +170,10 @@ class ProductDocumentEnricher implements DocumentEnricher
             }
 
             $primaryOrganisationResource = $this->resourceLoader->load(
-                $primaryOrganisationLocation
+                ResourceLocation::of(
+                    $primaryOrganisationLocation,
+                    $resource->lang
+                )
             );
             $doc = $this->organisationEnricher->enrichOrganisationPath(
                 $primaryOrganisationResource,

@@ -8,6 +8,7 @@ namespace Atoolo\CityGov\Test\Service\Indexer\Enricher\SiteKitSchema2x;
 use Atoolo\CityGov\Service\Indexer\Enricher\SiteKitSchema2x\OrganisationDocumentEnricher;
 // phpcs:ignore
 use Atoolo\CityGov\Service\Indexer\Enricher\SiteKitSchema2x\ProductDocumentEnricher;
+use Atoolo\CityGov\Test\TestResourceFactory;
 use Atoolo\Resource\Exception\InvalidResourceException;
 use Atoolo\Resource\Exception\ResourceNotFoundException;
 use Atoolo\Resource\Resource;
@@ -24,10 +25,9 @@ class ProductDocumentEnricherTest extends TestCase
 {
     public function testObjectType(): void
     {
-        $doc = $this->enrichDocument(
-            'content',
-            []
-        );
+        $doc = $this->enrichDocument([
+            'objectType' => 'content',
+        ]);
 
         $this->assertEquals(
             [],
@@ -38,19 +38,17 @@ class ProductDocumentEnricherTest extends TestCase
 
     public function testKeywords(): void
     {
-        $doc = $this->enrichDocument(
-            'citygovProduct',
-            [
-                'metadata' => [
-                    'citygovProduct' => [
-                        'synonymList' => [
-                            'Synonym6',
-                            'Synonym7'
-                        ]
+        $doc = $this->enrichDocument([
+            'objectType' => 'citygovProduct',
+            'metadata' => [
+                'citygovProduct' => [
+                    'synonymList' => [
+                        'Synonym6',
+                        'Synonym7'
                     ]
                 ]
             ]
-        );
+        ]);
 
         $this->assertEquals(
             [
@@ -64,16 +62,14 @@ class ProductDocumentEnricherTest extends TestCase
 
     public function testStartletter(): void
     {
-        $doc = $this->enrichDocument(
-            'citygovProduct',
-            [
-                'metadata' => [
-                    'citygovProduct' => [
-                        'name' => 'ProductName'
-                    ]
+        $doc = $this->enrichDocument([
+            'objectType' => 'citygovProduct',
+            'metadata' => [
+                'citygovProduct' => [
+                    'name' => 'ProductName'
                 ]
             ]
-        );
+        ]);
 
         $this->assertEquals(
             'P',
@@ -84,16 +80,14 @@ class ProductDocumentEnricherTest extends TestCase
 
     public function testSortvalue(): void
     {
-        $doc = $this->enrichDocument(
-            'citygovProduct',
-            [
-                'metadata' => [
-                    'citygovProduct' => [
-                        'name' => 'ProductName'
-                    ]
+        $doc = $this->enrichDocument([
+            'objectType' => 'citygovProduct',
+            'metadata' => [
+                'citygovProduct' => [
+                    'name' => 'ProductName'
                 ]
             ]
-        );
+        ]);
 
         $this->assertEquals(
             'ProductName',
@@ -104,25 +98,23 @@ class ProductDocumentEnricherTest extends TestCase
 
     public function testOrganisation(): void
     {
-        $doc = $this->enrichDocument(
-            'citygovProduct',
-            [
-                'metadata' => [
-                    'citygovProduct' => [
-                        'responsibilityList' => [
-                            'items' => [
-                                [
-                                    'primary' => true,
-                                    'organisation' => [
-                                        'url' => '/orga.php'
-                                    ]
+        $doc = $this->enrichDocument([
+            'objectType' => 'citygovProduct',
+            'metadata' => [
+                'citygovProduct' => [
+                    'responsibilityList' => [
+                        'items' => [
+                            [
+                                'primary' => true,
+                                'organisation' => [
+                                    'url' => '/orga.php'
                                 ]
                             ]
                         ]
                     ]
                 ]
             ]
-        );
+        ]);
 
         $this->assertEquals(
             '12',
@@ -133,24 +125,22 @@ class ProductDocumentEnricherTest extends TestCase
 
     public function testOrganisationWithoutPrimary(): void
     {
-        $doc = $this->enrichDocument(
-            'citygovProduct',
-            [
-                'metadata' => [
-                    'citygovProduct' => [
-                        'responsibilityList' => [
-                            'items' => [
-                                [
-                                    'organisation' => [
-                                        'url' => '/orga.php'
-                                    ]
+        $doc = $this->enrichDocument([
+            'objectType' => 'citygovProduct',
+            'metadata' => [
+                'citygovProduct' => [
+                    'responsibilityList' => [
+                        'items' => [
+                            [
+                                'organisation' => [
+                                    'url' => '/orga.php'
                                 ]
                             ]
                         ]
                     ]
                 ]
             ]
-        );
+        ]);
 
         $this->assertArrayNotHasKey(
             'sp_organisation',
@@ -161,24 +151,22 @@ class ProductDocumentEnricherTest extends TestCase
 
     public function testOrganisationWithoutUrl(): void
     {
-        $doc = $this->enrichDocument(
-            'citygovProduct',
-            [
-                'metadata' => [
-                    'citygovProduct' => [
-                        'responsibilityList' => [
-                            'items' => [
-                                [
-                                    'primary' => true,
-                                    'organisation' => [
-                                    ]
+        $doc = $this->enrichDocument([
+            'objectType' => 'citygovProduct',
+            'metadata' => [
+                'citygovProduct' => [
+                    'responsibilityList' => [
+                        'items' => [
+                            [
+                                'primary' => true,
+                                'organisation' => [
                                 ]
                             ]
                         ]
                     ]
                 ]
             ]
-        );
+        ]);
 
         $this->assertArrayNotHasKey(
             'sp_organisation',
@@ -190,45 +178,41 @@ class ProductDocumentEnricherTest extends TestCase
     public function testOrganisationWithException(): void
     {
         $this->expectException(DocumentEnrichingException::class);
-        $this->enrichDocument(
-            'citygovProduct',
-            [
-                'metadata' => [
-                    'citygovProduct' => [
-                        'responsibilityList' => [
-                            'items' => [
-                                [
-                                    'primary' => true,
-                                    'organisation' => [
-                                        'url' => 'throwException'
-                                    ]
+        $this->enrichDocument([
+            'objectType' => 'citygovProduct',
+            'metadata' => [
+                'citygovProduct' => [
+                    'responsibilityList' => [
+                        'items' => [
+                            [
+                                'primary' => true,
+                                'organisation' => [
+                                    'url' => 'throwException'
                                 ]
                             ]
                         ]
                     ]
                 ]
             ]
-        );
+        ]);
     }
 
     public function testContentTypeOnlineService(): void
     {
-        $doc = $this->enrichDocument(
-            'citygovProduct',
-            [
-                'metadata' => [
-                    'citygovProduct' => [
-                        'onlineServices' => [
-                            'serviceList' => [
-                                [
-                                    'dummy' => 'value'
-                                ]
+        $doc = $this->enrichDocument([
+            'objectType' => 'citygovProduct',
+            'metadata' => [
+                'citygovProduct' => [
+                    'onlineServices' => [
+                        'serviceList' => [
+                            [
+                                'dummy' => 'value'
                             ]
                         ]
                     ]
                 ]
             ]
-        );
+        ]);
 
         $this->assertEquals(
             ['citygovOnlineService'],
@@ -239,23 +223,20 @@ class ProductDocumentEnricherTest extends TestCase
 
     public function testLeikaKeys(): void
     {
-        $doc = $this->enrichDocument(
-            'citygovProduct',
-            [
-                'metadata' => [
-                    'citygovProduct' => [
-                        'leikaKeys' => [
-                            'leika1',
-                            'leika2'
-                        ]
+        $doc = $this->enrichDocument([
+            'objectType' => 'citygovProduct',
+            'metadata' => [
+                'citygovProduct' => [
+                    'leikaKeys' => [
+                        'leika1',
+                        'leika2'
                     ]
                 ]
             ]
-        );
+        ]);
 
         /** @var array{sp_meta_string_leikanumber: string[]} $fields */
         $fields = $doc->getFields();
-        print_r($fields);
 
         $this->assertEquals(
             [
@@ -269,30 +250,28 @@ class ProductDocumentEnricherTest extends TestCase
 
     public function testRichTextContent(): void
     {
-        $doc = $this->enrichDocument(
-            'citygovProduct',
-            [
-                'metadata' => [
-                    'citygovProduct' => [
-                        'content' => [
-                            "info" => [
-                                "modelType" => "citygov.contentBlock",
-                                "id" => "info",
-                                "contentList" => [[
-                                    "modelType" => "content.text",
-                                    "richText" => [
-                                        "normalized" => true,
-                                        "modelType" => "html.richText",
-                                        "text" =>
-                                            "<p><span>Information</span></p>"
-                                    ]
-                                ]]
-                            ],
-                        ]
+        $doc = $this->enrichDocument([
+            'objectType' => 'citygovProduct',
+            'metadata' => [
+                'citygovProduct' => [
+                    'content' => [
+                        "info" => [
+                            "modelType" => "citygov.contentBlock",
+                            "id" => "info",
+                            "contentList" => [[
+                                "modelType" => "content.text",
+                                "richText" => [
+                                    "normalized" => true,
+                                    "modelType" => "html.richText",
+                                    "text" =>
+                                        "<p><span>Information</span></p>"
+                                ]
+                            ]]
+                        ],
                     ]
                 ]
             ]
-        );
+        ]);
 
         $this->assertEquals(
             'Information',
@@ -301,39 +280,35 @@ class ProductDocumentEnricherTest extends TestCase
         );
     }
     private function enrichDocument(
-        string $objectType,
         array $data
     ): DocumentInterface {
 
         $resourceLoader = $this->createStub(
             ResourceLoader::class
         );
-        $orga = new Resource(
-            '/orga.php',
-            '12',
-            'orga',
-            'citygovOrganisation',
-            '',
-            [
-                'metadata' => [
-                    'citygovOrganisation' => [
-                        'name' => 'orgaName',
-                        'token' => 'token.A',
-                        'synonymList' => ['Synonym1', 'Synonym2']
-                    ]
+        $orga = TestResourceFactory::create([
+            'url' => '/orga.php',
+            'id' => '12',
+            'name' => 'orga',
+            'objectType' => 'citygovOrganisation',
+            'metadata' => [
+                'citygovOrganisation' => [
+                    'name' => 'orgaName',
+                    'token' => 'token.A',
+                    'synonymList' => ['Synonym1', 'Synonym2']
                 ]
             ]
-        );
+        ]);
         $resourceLoader->expects($this->any())
             ->method('load')
             ->willReturnCallback(function ($location) use ($orga) {
-                if ($location === 'throwException') {
+                if ($location->location === 'throwException') {
                     throw new InvalidResourceException(
-                        'throwException',
+                        $location,
                         'throw for test'
                     );
                 }
-                if ($location === '/orga.php') {
+                if ($location->location === '/orga.php') {
                     return $orga;
                 }
                 throw new ResourceNotFoundException($location);
@@ -353,14 +328,7 @@ class ProductDocumentEnricherTest extends TestCase
         );
         $doc = new IndexSchema2xDocument();
 
-        $resource = new Resource(
-            'test',
-            'test',
-            'test',
-            $objectType,
-            '',
-            $data
-        );
+        $resource = TestResourceFactory::create($data);
 
         return $enricher->enrichDocument($resource, $doc, '');
     }
