@@ -23,6 +23,11 @@ class OrganisationDocumentEnricher implements DocumentEnricher
     ) {
     }
 
+    public function cleanup(): void
+    {
+        $this->hierarchyLoader->cleanup();
+    }
+
     /**
      * @throws DocumentEnrichingException
      */

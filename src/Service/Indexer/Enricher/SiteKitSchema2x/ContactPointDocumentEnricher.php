@@ -34,6 +34,10 @@ use Atoolo\Search\Service\Indexer\IndexSchema2xDocument;
  */
 class ContactPointDocumentEnricher implements DocumentEnricher
 {
+    public function cleanup(): void
+    {
+    }
+
     /**
      * @throws DocumentEnrichingException
      */

@@ -39,6 +39,11 @@ class PersonDocumentEnricher implements DocumentEnricher
     ) {
     }
 
+    public function cleanup(): void
+    {
+        $this->resourceLoader->cleanup();
+    }
+
     /**
      * @throws DocumentEnrichingException
      */
