@@ -7,8 +7,6 @@ namespace Atoolo\CityGov\Test\Service\Indexer\Enricher\SiteKitSchema2x;
 // phpcs:ignore
 use Atoolo\CityGov\Service\Indexer\Enricher\SiteKitSchema2x\OrganisationDocumentEnricher;
 // phpcs:ignore
-use Atoolo\CityGov\Service\Indexer\Enricher\SiteKitSchema2x\PersonDocumentEnricher;
-// phpcs:ignore
 use Atoolo\CityGov\Service\Indexer\Enricher\SiteKitSchema2x\ProductDocumentEnricher;
 use Atoolo\CityGov\Test\TestResourceFactory;
 use Atoolo\Resource\Exception\InvalidResourceException;
