@@ -7,7 +7,6 @@ namespace Atoolo\CityGov\Test\Service\Indexer\Enricher\SiteKitSchema2x;
 // phpcs:ignore
 use Atoolo\CityGov\Service\Indexer\Enricher\SiteKitSchema2x\ContactPointDocumentEnricher;
 use Atoolo\CityGov\Test\TestResourceFactory;
-use Atoolo\Resource\Resource;
 use Atoolo\Search\Service\Indexer\IndexSchema2xDocument;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\Exception;

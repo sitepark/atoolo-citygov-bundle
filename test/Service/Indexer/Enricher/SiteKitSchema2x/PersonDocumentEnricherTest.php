@@ -11,8 +11,6 @@ use Atoolo\CityGov\Service\Indexer\Enricher\SiteKitSchema2x\PersonDocumentEnrich
 use Atoolo\CityGov\Test\TestResourceFactory;
 use Atoolo\Resource\Exception\InvalidResourceException;
 use Atoolo\Resource\Exception\ResourceNotFoundException;
-use Atoolo\Resource\Loader\SiteKitResourceHierarchyLoader;
-use Atoolo\Resource\Resource;
 use Atoolo\Resource\ResourceLoader;
 use Atoolo\Search\Exception\DocumentEnrichingException;
 use Atoolo\Search\Service\Indexer\IndexSchema2xDocument;
@@ -20,6 +18,8 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
 use Solarium\Core\Query\DocumentInterface;
+
+// phpcs:ignore
 
 #[CoversClass(PersonDocumentEnricher::class)]
 class PersonDocumentEnricherTest extends TestCase
