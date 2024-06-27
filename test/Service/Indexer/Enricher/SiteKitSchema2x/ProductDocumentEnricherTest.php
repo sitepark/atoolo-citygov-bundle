@@ -7,6 +7,7 @@ namespace Atoolo\CityGov\Test\Service\Indexer\Enricher\SiteKitSchema2x;
 // phpcs:ignore
 use Atoolo\CityGov\Service\Indexer\Enricher\SiteKitSchema2x\OrganisationDocumentEnricher;
 // phpcs:ignore
+use Atoolo\CityGov\Service\Indexer\Enricher\SiteKitSchema2x\PersonDocumentEnricher;
 use Atoolo\CityGov\Service\Indexer\Enricher\SiteKitSchema2x\ProductDocumentEnricher;
 use Atoolo\CityGov\Test\TestResourceFactory;
 use Atoolo\Resource\Exception\InvalidResourceException;
@@ -16,6 +17,7 @@ use Atoolo\Resource\ResourceLoader;
 use Atoolo\Search\Exception\DocumentEnrichingException;
 use Atoolo\Search\Service\Indexer\IndexSchema2xDocument;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
 use Solarium\Core\Query\DocumentInterface;
 
@@ -23,6 +25,27 @@ use Solarium\Core\Query\DocumentInterface;
 
 class ProductDocumentEnricherTest extends TestCase
 {
+    /**
+     * @throws Exception
+     */
+    public function testCleanup(): void
+    {
+        $resourceLoader = $this->createMock(
+            ResourceLoader::class
+        );
+        $organisationEnricher = $this->createStub(
+            OrganisationDocumentEnricher::class
+        );
+        $resourceLoader->expects($this->once())
+            ->method('cleanup');
+
+        $enricher = new ProductDocumentEnricher(
+            $resourceLoader,
+            $organisationEnricher
+        );
+        $enricher->cleanup();
+    }
+
     public function testObjectType(): void
     {
         $doc = $this->enrichDocument([

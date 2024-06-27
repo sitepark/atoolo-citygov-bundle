@@ -16,6 +16,12 @@ use PHPUnit\Framework\TestCase;
 #[CoversClass(ContactPointDocumentEnricher::class)]
 class ContactPointDocumentEnricherTest extends TestCase
 {
+    public function testCleanup(): void
+    {
+        $this->expectNotToPerformAssertions();
+        $enricher = new ContactPointDocumentEnricher();
+        $enricher->cleanup();
+    }
     /**
      * @throws Exception
      */

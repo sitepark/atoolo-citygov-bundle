@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Atoolo\CityGov\Test\Service\Indexer\Enricher\SiteKitSchema2x;
 
 // phpcs:ignore
+use Atoolo\CityGov\Service\Indexer\Enricher\SiteKitSchema2x\ContactPointDocumentEnricher;
 use Atoolo\CityGov\Service\Indexer\Enricher\SiteKitSchema2x\OrganisationDocumentEnricher;
 use Atoolo\CityGov\Test\TestResourceFactory;
 use Atoolo\Resource\Loader\SiteKitResourceHierarchyLoader;
@@ -19,6 +20,21 @@ use PHPUnit\Framework\TestCase;
 #[CoversClass(OrganisationDocumentEnricher::class)]
 class OrganisationDocumentEnricherTest extends TestCase
 {
+    /**
+     * @throws Exception
+     */
+    public function testCleanup(): void
+    {
+        $hierarchyLoader = $this->createMock(
+            SiteKitResourceHierarchyLoader::class
+        );
+        $hierarchyLoader->expects($this->once())
+            ->method('cleanup');
+
+        $enricher = new OrganisationDocumentEnricher($hierarchyLoader);
+        $enricher->cleanup();
+    }
+
     /**
      * @throws Exception
      */
