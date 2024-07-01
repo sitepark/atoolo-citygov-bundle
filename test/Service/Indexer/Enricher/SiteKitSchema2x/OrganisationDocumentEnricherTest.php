@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace Atoolo\CityGov\Test\Service\Indexer\Enricher\SiteKitSchema2x;
 
-// phpcs:ignore
-use Atoolo\CityGov\Service\Indexer\Enricher\SiteKitSchema2x\OrganisationDocumentEnricher;
+use Atoolo\CityGov\Service\Indexer\Enricher\{
+    SiteKitSchema2x\OrganisationDocumentEnricher
+};
 use Atoolo\CityGov\Test\TestResourceFactory;
 use Atoolo\Resource\Loader\SiteKitResourceHierarchyLoader;
 use Atoolo\Resource\ResourceLocation;

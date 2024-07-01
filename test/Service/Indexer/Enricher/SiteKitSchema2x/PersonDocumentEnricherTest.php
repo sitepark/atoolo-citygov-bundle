@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Atoolo\CityGov\Test\Service\Indexer\Enricher\SiteKitSchema2x;
 
-// phpcs:ignore
-use Atoolo\CityGov\Service\Indexer\Enricher\SiteKitSchema2x\OrganisationDocumentEnricher;
-// phpcs:ignore
-use Atoolo\CityGov\Service\Indexer\Enricher\SiteKitSchema2x\PersonDocumentEnricher;
+use Atoolo\CityGov\Service\Indexer\Enricher\{
+    SiteKitSchema2x\OrganisationDocumentEnricher,
+    SiteKitSchema2x\PersonDocumentEnricher
+};
 use Atoolo\CityGov\Test\TestResourceFactory;
 use Atoolo\Resource\Exception\InvalidResourceException;
 use Atoolo\Resource\Exception\ResourceNotFoundException;
