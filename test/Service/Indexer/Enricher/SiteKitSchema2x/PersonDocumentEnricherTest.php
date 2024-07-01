@@ -19,8 +19,6 @@ use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
 use Solarium\Core\Query\DocumentInterface;
 
-// phpcs:ignore
-
 #[CoversClass(PersonDocumentEnricher::class)]
 class PersonDocumentEnricherTest extends TestCase
 {
