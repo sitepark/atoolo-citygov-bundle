@@ -30,9 +30,8 @@ class ProductDocumentEnricher implements DocumentEnricher
 {
     public function __construct(
         private readonly ResourceLoader $resourceLoader,
-        private readonly OrganisationDocumentEnricher $organisationEnricher
-    ) {
-    }
+        private readonly OrganisationDocumentEnricher $organisationEnricher,
+    ) {}
 
     public function cleanup(): void
     {
@@ -45,7 +44,7 @@ class ProductDocumentEnricher implements DocumentEnricher
     public function enrichDocument(
         Resource $resource,
         IndexDocument $doc,
-        string $processId
+        string $processId,
     ): IndexDocument {
 
         if ($resource->objectType !== 'citygovProduct') {
@@ -62,12 +61,12 @@ class ProductDocumentEnricher implements DocumentEnricher
      */
     private function enrichDocumentForProduct(
         Resource $resource,
-        IndexDocument $doc
+        IndexDocument $doc,
     ): IndexDocument {
 
         /** @var string[] $synonymList */
         $synonymList = $resource->data->getArray(
-            'metadata.citygovProduct.synonymList'
+            'metadata.citygovProduct.synonymList',
         );
         if (!empty($synonymList)) {
             $doc->keywords = array_merge($doc->keywords ?? [], $synonymList);
@@ -76,7 +75,7 @@ class ProductDocumentEnricher implements DocumentEnricher
         $name = str_replace(
             ["ä","ö","ü", "Ä","Ö","Ü"],
             ["ae", "oe", "ue", "Ae", "Oe", "Ue"],
-            $resource->data->getString('metadata.citygovProduct.name')
+            $resource->data->getString('metadata.citygovProduct.name'),
         );
         if (!empty($name)) {
             $doc->sp_citygov_startletter = mb_substr($name, 0, 1);
@@ -90,23 +89,23 @@ class ProductDocumentEnricher implements DocumentEnricher
                 $resource->toLocation(),
                 'Unable to enrich organisation_path for product',
                 0,
-                $e
+                $e,
             );
         }
 
         $onlineServiceList = $resource->data->getArray(
-            'metadata.citygovProduct.onlineServices.serviceList'
+            'metadata.citygovProduct.onlineServices.serviceList',
         );
         if (!empty($onlineServiceList)) {
             $doc->sp_contenttype = array_merge(
                 $doc->sp_contenttype ?? [],
-                ['citygovOnlineService']
+                ['citygovOnlineService'],
             );
         }
 
         /** @var string[] $leikaKeys */
         $leikaKeys = $resource->data->getArray(
-            'metadata.citygovProduct.leikaKeys'
+            'metadata.citygovProduct.leikaKeys',
         );
         if (!empty($leikaKeys)) {
             $doc->setMetaString('leikanumber', $leikaKeys);
@@ -124,26 +123,26 @@ class ProductDocumentEnricher implements DocumentEnricher
      */
     private function enrichContent(
         Resource $resource,
-        IndexDocument $doc
+        IndexDocument $doc,
     ): IndexDocument {
 
         $contentCollector = new ContentCollector([
-           new RichtTextMatcher()
+            new RichtTextMatcher(),
         ]);
 
         $content = $contentCollector->collect(
             $resource->data->getArray(
-                'metadata.citygovProduct.content'
-            )
+                'metadata.citygovProduct.content',
+            ),
         );
         $cleanContent = preg_replace(
             '/\s+/',
             ' ',
-            $content
+            $content,
         );
 
         $doc->content = trim(
-            ($doc->content ?? '') . ' ' . $cleanContent
+            ($doc->content ?? '') . ' ' . $cleanContent,
         );
 
         return $doc;
@@ -156,12 +155,12 @@ class ProductDocumentEnricher implements DocumentEnricher
      */
     private function enrichOrganisationPath(
         Resource $resource,
-        IndexDocument $doc
+        IndexDocument $doc,
     ): IndexDocument {
 
         /** @var Responsibility[] $responsibilityList */
         $responsibilityList = $resource->data->getAssociativeArray(
-            'metadata.citygovProduct.responsibilityList.items'
+            'metadata.citygovProduct.responsibilityList.items',
         );
         foreach ($responsibilityList as $responsibility) {
             if (($responsibility['primary'] ?? false) !== true) {
@@ -177,12 +176,12 @@ class ProductDocumentEnricher implements DocumentEnricher
             $primaryOrganisationResource = $this->resourceLoader->load(
                 ResourceLocation::of(
                     $primaryOrganisationLocation,
-                    $resource->lang
-                )
+                    $resource->lang,
+                ),
             );
             $doc = $this->organisationEnricher->enrichOrganisationPath(
                 $primaryOrganisationResource,
-                $doc
+                $doc,
             );
             break;
         }

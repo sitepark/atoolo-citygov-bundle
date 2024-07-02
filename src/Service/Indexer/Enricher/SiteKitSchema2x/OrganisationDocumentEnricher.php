@@ -19,9 +19,8 @@ use Exception;
 class OrganisationDocumentEnricher implements DocumentEnricher
 {
     public function __construct(
-        private readonly SiteKitResourceHierarchyLoader $hierarchyLoader
-    ) {
-    }
+        private readonly SiteKitResourceHierarchyLoader $hierarchyLoader,
+    ) {}
 
     public function cleanup(): void
     {
@@ -34,7 +33,7 @@ class OrganisationDocumentEnricher implements DocumentEnricher
     public function enrichDocument(
         Resource $resource,
         IndexDocument $doc,
-        string $processId
+        string $processId,
     ): IndexDocument {
 
         if ($resource->objectType !== 'citygovOrganisation') {
@@ -51,12 +50,12 @@ class OrganisationDocumentEnricher implements DocumentEnricher
      */
     private function enrichDocumentForOrganisation(
         Resource $resource,
-        IndexDocument $doc
+        IndexDocument $doc,
     ): IndexDocument {
 
         /** @var string[] $synonymList */
         $synonymList = $resource->data->getArray(
-            'metadata.citygovOrganisation.synonymList'
+            'metadata.citygovOrganisation.synonymList',
         );
 
         $doc->keywords = array_merge($doc->keywords ?? [], $synonymList);
@@ -65,8 +64,8 @@ class OrganisationDocumentEnricher implements DocumentEnricher
             ["ä","ö","ü", "Ä","Ö","Ü"],
             ["ae", "oe", "ue", "Ae", "Oe", "Ue"],
             $resource->data->getString(
-                'metadata.citygovOrganisation.name'
-            )
+                'metadata.citygovOrganisation.name',
+            ),
         );
         $doc->sp_sortvalue = $name;
         if (!empty($name)) {
@@ -74,12 +73,12 @@ class OrganisationDocumentEnricher implements DocumentEnricher
         }
 
         $doc->sp_citygov_organisationtoken = [$resource->data->getString(
-            'metadata.citygovOrganisation.token'
+            'metadata.citygovOrganisation.token',
         )];
 
         $content = array_merge(
             [$doc->content ?? ''],
-            $doc->sp_citygov_organisationtoken
+            $doc->sp_citygov_organisationtoken,
         );
         $doc->content = trim(implode(' ', $content));
 
@@ -93,28 +92,28 @@ class OrganisationDocumentEnricher implements DocumentEnricher
      */
     public function enrichOrganisationPath(
         Resource $resource,
-        IndexDocument $doc
+        IndexDocument $doc,
     ): IndexDocument {
-        $doc->sp_organisation = (int)$resource->id;
+        $doc->sp_organisation = (int) $resource->id;
 
         try {
             $organisationPath =
                 $this->hierarchyLoader->loadPrimaryPath(
-                    $resource->toLocation()
+                    $resource->toLocation(),
                 );
             $organisationIdPath = array_map(static function ($resource) {
-                return (int)$resource->id;
+                return (int) $resource->id;
             }, $organisationPath);
             $doc->sp_organisation_path = array_merge(
                 $doc->sp_organisation_path ?? [],
-                $organisationIdPath
+                $organisationIdPath,
             );
         } catch (Exception $e) {
             throw new DocumentEnrichingException(
                 $resource->toLocation(),
                 'Unable to enrich sp_organisation_path',
                 0,
-                $e
+                $e,
             );
         }
 

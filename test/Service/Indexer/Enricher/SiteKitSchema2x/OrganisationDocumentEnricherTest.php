@@ -25,7 +25,7 @@ class OrganisationDocumentEnricherTest extends TestCase
     public function testCleanup(): void
     {
         $hierarchyLoader = $this->createMock(
-            SiteKitResourceHierarchyLoader::class
+            SiteKitResourceHierarchyLoader::class,
         );
         $hierarchyLoader->expects($this->once())
             ->method('cleanup');
@@ -46,7 +46,7 @@ class OrganisationDocumentEnricherTest extends TestCase
         $this->assertEquals(
             [],
             $doc->getFields(),
-            'document should be empty'
+            'document should be empty',
         );
     }
 
@@ -59,15 +59,15 @@ class OrganisationDocumentEnricherTest extends TestCase
             'objectType' => 'citygovOrganisation',
             'metadata' => [
                 'citygovOrganisation' => [
-                    'synonymList' => ['blue', 'red']
-                ]
-            ]
+                    'synonymList' => ['blue', 'red'],
+                ],
+            ],
         ]);
 
         $this->assertEquals(
             ['blue', 'red'],
             $doc->keywords,
-            'unexpected synonyms as keywords'
+            'unexpected synonyms as keywords',
         );
     }
 
@@ -80,15 +80,15 @@ class OrganisationDocumentEnricherTest extends TestCase
             'objectType' => 'citygovOrganisation',
             'metadata' => [
                 'citygovOrganisation' => [
-                    'name' => 'Orga'
-                ]
-            ]
+                    'name' => 'Orga',
+                ],
+            ],
         ]);
 
         $this->assertEquals(
             'O',
             $doc->sp_citygov_startletter,
-            'unexpected startletter'
+            'unexpected startletter',
         );
     }
 
@@ -101,15 +101,15 @@ class OrganisationDocumentEnricherTest extends TestCase
             'objectType' => 'citygovOrganisation',
             'metadata' => [
                 'citygovOrganisation' => [
-                    'token' => '123'
-                ]
-            ]
+                    'token' => '123',
+                ],
+            ],
         ]);
 
         $this->assertEquals(
             ['123'],
             $doc->sp_citygov_organisationtoken,
-            'unexpected token'
+            'unexpected token',
         );
     }
 
@@ -119,15 +119,15 @@ class OrganisationDocumentEnricherTest extends TestCase
             'objectType' => 'citygovOrganisation',
             'metadata' => [
                 'citygovOrganisation' => [
-                    'token' => '123'
-                ]
-            ]
+                    'token' => '123',
+                ],
+            ],
         ]);
 
         $this->assertEquals(
             '123',
             $doc->content,
-            'unexpected token'
+            'unexpected token',
         );
     }
 
@@ -141,15 +141,15 @@ class OrganisationDocumentEnricherTest extends TestCase
             'objectType' => 'citygovOrganisation',
             'metadata' => [
                 'citygovOrganisation' => [
-                    'name' => 'Orga'
-                ]
-            ]
+                    'name' => 'Orga',
+                ],
+            ],
         ]);
 
         $this->assertEquals(
             'Orga',
             $doc->sp_sortvalue,
-            'unexpected sortvalue'
+            'unexpected sortvalue',
         );
     }
 
@@ -160,14 +160,14 @@ class OrganisationDocumentEnricherTest extends TestCase
     {
         $doc = $this->enrichOrganisationPath(
             [
-                'id' => '123'
-            ]
+                'id' => '123',
+            ],
         );
 
         $this->assertEquals(
             123,
             $doc->sp_organisation,
-            'unexpected id'
+            'unexpected id',
         );
     }
 
@@ -183,26 +183,26 @@ class OrganisationDocumentEnricherTest extends TestCase
                         'citygovOrganisation' => [
                             'parents' => [
                                 '12' => [
-                                    'url' => '/12.php'
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
-            ]
+                                    'url' => '/12.php',
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
         );
 
         $this->assertEquals(
             [12, 123],
             $doc->sp_organisation_path,
-            'unexpected path'
+            'unexpected path',
         );
     }
 
     public function testOrgaPathWithException(): void
     {
         $hierarchyLoader = $this->createStub(
-            SiteKitResourceHierarchyLoader::class
+            SiteKitResourceHierarchyLoader::class,
         );
         $resource = TestResourceFactory::create([
             'url' => '/12.php',
@@ -215,11 +215,11 @@ class OrganisationDocumentEnricherTest extends TestCase
             ->method('loadPrimaryPath')
             ->willThrowException(new DocumentEnrichingException(
                 ResourceLocation::of('test'),
-                'test'
+                'test',
             ));
 
         $enricher = new OrganisationDocumentEnricher(
-            $hierarchyLoader
+            $hierarchyLoader,
         );
         $doc = $this->createMock(IndexSchema2xDocument::class);
 
@@ -231,13 +231,13 @@ class OrganisationDocumentEnricherTest extends TestCase
      * @throws Exception
      */
     private function enrichDocument(
-        array $data
+        array $data,
     ): IndexSchema2xDocument {
         $hierarchyLoader = $this->createStub(
-            SiteKitResourceHierarchyLoader::class
+            SiteKitResourceHierarchyLoader::class,
         );
         $enricher = new OrganisationDocumentEnricher(
-            $hierarchyLoader
+            $hierarchyLoader,
         );
         $doc = $this->createMock(IndexSchema2xDocument::class);
 
@@ -250,10 +250,10 @@ class OrganisationDocumentEnricherTest extends TestCase
      * @throws Exception
      */
     private function enrichOrganisationPath(
-        array $data
+        array $data,
     ): IndexSchema2xDocument {
         $hierarchyLoader = $this->createStub(
-            SiteKitResourceHierarchyLoader::class
+            SiteKitResourceHierarchyLoader::class,
         );
         $resource12 = TestResourceFactory::create(array_merge([
             'url' => '/12.php',
@@ -273,7 +273,7 @@ class OrganisationDocumentEnricherTest extends TestCase
             ->willReturn([$resource12, $resource123]);
 
         $enricher = new OrganisationDocumentEnricher(
-            $hierarchyLoader
+            $hierarchyLoader,
         );
         $doc = $this->createMock(IndexSchema2xDocument::class);
 

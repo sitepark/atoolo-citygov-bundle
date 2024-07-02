@@ -35,9 +35,8 @@ class PersonDocumentEnricher implements DocumentEnricher
 {
     public function __construct(
         private readonly ResourceLoader $resourceLoader,
-        private readonly OrganisationDocumentEnricher $organisationEnricher
-    ) {
-    }
+        private readonly OrganisationDocumentEnricher $organisationEnricher,
+    ) {}
 
     public function cleanup(): void
     {
@@ -50,7 +49,7 @@ class PersonDocumentEnricher implements DocumentEnricher
     public function enrichDocument(
         Resource $resource,
         IndexDocument $doc,
-        string $processId
+        string $processId,
     ): IndexDocument {
 
         if ($resource->objectType !== 'citygovPerson') {
@@ -67,14 +66,14 @@ class PersonDocumentEnricher implements DocumentEnricher
      */
     private function enrichDocumentForPerson(
         Resource $resource,
-        IndexDocument $doc
+        IndexDocument $doc,
     ): IndexDocument {
 
         $firstname = $resource->data->getString(
-            'metadata.citygovPerson.firstname'
+            'metadata.citygovPerson.firstname',
         );
         $lastname = $resource->data->getString(
-            'metadata.citygovPerson.lastname'
+            'metadata.citygovPerson.lastname',
         );
 
         $doc->sp_citygov_firstname = $firstname;
@@ -87,7 +86,7 @@ class PersonDocumentEnricher implements DocumentEnricher
         $sortName = str_replace(
             ["ä","ö","ü", "Ä","Ö","Ü"],
             ["ae", "oe", "ue", "Ae", "Oe", "Ue"],
-            $lastname . 'aaa' . $firstname
+            $lastname . 'aaa' . $firstname,
         );
         $doc->sp_sortvalue = $sortName;
         if ($lastname !== '') {
@@ -101,7 +100,7 @@ class PersonDocumentEnricher implements DocumentEnricher
                 $resource->toLocation(),
                 'Unable to enrich organisation for person',
                 0,
-                $e
+                $e,
             );
         }
 
@@ -112,19 +111,19 @@ class PersonDocumentEnricher implements DocumentEnricher
                 $resource->toLocation(),
                 'Unable to enrich products for person',
                 0,
-                $e
+                $e,
             );
         }
 
         $functionName = $resource->data->getString(
-            'metadata.citygovPerson.function.name'
+            'metadata.citygovPerson.function.name',
         );
         $functionAppendix = $resource->data->getString(
-            'metadata.citygovPerson.function.appendix'
+            'metadata.citygovPerson.function.appendix',
         );
 
         $doc->sp_citygov_function = trim(
-            $functionName . ' ' . $functionAppendix
+            $functionName . ' ' . $functionAppendix,
         );
 
         $content = ($doc->content ?? '') . ' ' . $doc->sp_citygov_function;
@@ -140,11 +139,11 @@ class PersonDocumentEnricher implements DocumentEnricher
      */
     private function enrichPersonOrganisations(
         Resource $resource,
-        IndexDocument $doc
+        IndexDocument $doc,
     ): IndexDocument {
         /** @var Membership[] $membershipList */
         $membershipList = $resource->data->getArray(
-            'metadata.citygovPerson.membershipList.items'
+            'metadata.citygovPerson.membershipList.items',
         );
         /** @var array<array<string>> $organisationNameMergeList */
         $organisationNameMergeList = [];
@@ -158,31 +157,31 @@ class PersonDocumentEnricher implements DocumentEnricher
             }
 
             $organisationResource = $this->resourceLoader->load(
-                ResourceLocation::of($organisationLocation, $resource->lang)
+                ResourceLocation::of($organisationLocation, $resource->lang),
             );
 
             $organisationNameMergeList[] = [
                 $organisationResource->data->getString(
-                    'metadata.citygovOrganisation.name'
-                )
+                    'metadata.citygovOrganisation.name',
+                ),
             ];
 
             $token = $organisationResource->data->getString(
-                'metadata.citygovOrganisation.token'
+                'metadata.citygovOrganisation.token',
             );
             if (!empty($token)) {
                 $organisationTokenList[] = str_replace('.', ' ', $token);
             }
 
             $synonymList = $organisationResource->data->getArray(
-                'metadata.citygovOrganisation.synonymList'
+                'metadata.citygovOrganisation.synonymList',
             );
             $organisationNameMergeList[] = $synonymList;
 
             if (($membership['primary'] ?? false) === true) {
                 $doc = $this->organisationEnricher->enrichOrganisationPath(
                     $organisationResource,
-                    $doc
+                    $doc,
                 );
             }
         }
@@ -203,12 +202,12 @@ class PersonDocumentEnricher implements DocumentEnricher
      */
     private function enrichPersonProducts(
         Resource $resource,
-        IndexDocument $doc
+        IndexDocument $doc,
     ): IndexDocument {
 
         /** @var Competence[] $competenceList */
         $competenceList = $resource->data->getArray(
-            'metadata.citygovPerson.competenceList.items'
+            'metadata.citygovPerson.competenceList.items',
         );
         $productNameMergeList = [];
 
@@ -220,18 +219,18 @@ class PersonDocumentEnricher implements DocumentEnricher
             $productResource = $this->resourceLoader->load(
                 ResourceLocation::of(
                     $productLocation,
-                    $resource->lang
-                )
+                    $resource->lang,
+                ),
             );
 
             $productNameMergeList[] = [
                 $productResource->data->getString(
-                    'metadata.citygovProduct.name'
-                )
+                    'metadata.citygovProduct.name',
+                ),
             ];
 
             $synonymList = $productResource->data->getArray(
-                'metadata.citygovProduct.synonymList'
+                'metadata.citygovProduct.synonymList',
             );
             $productNameMergeList[] = $synonymList;
         }

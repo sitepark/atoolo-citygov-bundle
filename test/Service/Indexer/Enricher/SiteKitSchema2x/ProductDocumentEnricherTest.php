@@ -28,17 +28,17 @@ class ProductDocumentEnricherTest extends TestCase
     public function testCleanup(): void
     {
         $resourceLoader = $this->createMock(
-            ResourceLoader::class
+            ResourceLoader::class,
         );
         $organisationEnricher = $this->createStub(
-            OrganisationDocumentEnricher::class
+            OrganisationDocumentEnricher::class,
         );
         $resourceLoader->expects($this->once())
             ->method('cleanup');
 
         $enricher = new ProductDocumentEnricher(
             $resourceLoader,
-            $organisationEnricher
+            $organisationEnricher,
         );
         $enricher->cleanup();
     }
@@ -52,7 +52,7 @@ class ProductDocumentEnricherTest extends TestCase
         $this->assertEquals(
             [],
             $doc->getFields(),
-            'document should be empty'
+            'document should be empty',
         );
     }
 
@@ -64,19 +64,19 @@ class ProductDocumentEnricherTest extends TestCase
                 'citygovProduct' => [
                     'synonymList' => [
                         'Synonym6',
-                        'Synonym7'
-                    ]
-                ]
-            ]
+                        'Synonym7',
+                    ],
+                ],
+            ],
         ]);
 
         $this->assertEquals(
             [
                 'Synonym6',
-                'Synonym7'
+                'Synonym7',
             ],
             $doc->keywords,
-            'unexpected keywords'
+            'unexpected keywords',
         );
     }
 
@@ -86,15 +86,15 @@ class ProductDocumentEnricherTest extends TestCase
             'objectType' => 'citygovProduct',
             'metadata' => [
                 'citygovProduct' => [
-                    'name' => 'ProductName'
-                ]
-            ]
+                    'name' => 'ProductName',
+                ],
+            ],
         ]);
 
         $this->assertEquals(
             'P',
             $doc->sp_citygov_startletter,
-            'unexpected startletter'
+            'unexpected startletter',
         );
     }
 
@@ -104,15 +104,15 @@ class ProductDocumentEnricherTest extends TestCase
             'objectType' => 'citygovProduct',
             'metadata' => [
                 'citygovProduct' => [
-                    'name' => 'ProductName'
-                ]
-            ]
+                    'name' => 'ProductName',
+                ],
+            ],
         ]);
 
         $this->assertEquals(
             'ProductName',
             $doc->sp_sortvalue,
-            'unexpected sortvalue'
+            'unexpected sortvalue',
         );
     }
 
@@ -127,19 +127,19 @@ class ProductDocumentEnricherTest extends TestCase
                             [
                                 'primary' => true,
                                 'organisation' => [
-                                    'url' => '/orga.php'
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
-            ]
+                                    'url' => '/orga.php',
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
         ]);
 
         $this->assertEquals(
             '12',
             $doc->sp_organisation,
-            'unexpected organisation'
+            'unexpected organisation',
         );
     }
 
@@ -153,19 +153,19 @@ class ProductDocumentEnricherTest extends TestCase
                         'items' => [
                             [
                                 'organisation' => [
-                                    'url' => '/orga.php'
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
-            ]
+                                    'url' => '/orga.php',
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
         ]);
 
         $this->assertArrayNotHasKey(
             'sp_organisation',
             $doc->getFields(),
-            'unexpected organisation'
+            'unexpected organisation',
         );
     }
 
@@ -180,18 +180,18 @@ class ProductDocumentEnricherTest extends TestCase
                             [
                                 'primary' => true,
                                 'organisation' => [
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
-            ]
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
         ]);
 
         $this->assertArrayNotHasKey(
             'sp_organisation',
             $doc->getFields(),
-            'unexpected organisation'
+            'unexpected organisation',
         );
     }
 
@@ -207,13 +207,13 @@ class ProductDocumentEnricherTest extends TestCase
                             [
                                 'primary' => true,
                                 'organisation' => [
-                                    'url' => 'throwException'
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
-            ]
+                                    'url' => 'throwException',
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
         ]);
     }
 
@@ -226,18 +226,18 @@ class ProductDocumentEnricherTest extends TestCase
                     'onlineServices' => [
                         'serviceList' => [
                             [
-                                'dummy' => 'value'
-                            ]
-                        ]
-                    ]
-                ]
-            ]
+                                'dummy' => 'value',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
         ]);
 
         $this->assertEquals(
             ['citygovOnlineService'],
             $doc->sp_contenttype,
-            'unexpected contenttype'
+            'unexpected contenttype',
         );
     }
 
@@ -249,10 +249,10 @@ class ProductDocumentEnricherTest extends TestCase
                 'citygovProduct' => [
                     'leikaKeys' => [
                         'leika1',
-                        'leika2'
-                    ]
-                ]
-            ]
+                        'leika2',
+                    ],
+                ],
+            ],
         ]);
 
         /** @var array{sp_meta_string_leikanumber: string[]} $fields */
@@ -261,10 +261,10 @@ class ProductDocumentEnricherTest extends TestCase
         $this->assertEquals(
             [
                 'leika1',
-                'leika2'
+                'leika2',
             ],
             $fields['sp_meta_string_leikanumber'],
-            'unexpected leikaKeys'
+            'unexpected leikaKeys',
         );
     }
 
@@ -284,27 +284,27 @@ class ProductDocumentEnricherTest extends TestCase
                                     "normalized" => true,
                                     "modelType" => "html.richText",
                                     "text" =>
-                                        "<p><span>Information</span></p>"
-                                ]
-                            ]]
+                                        "<p><span>Information</span></p>",
+                                ],
+                            ]],
                         ],
-                    ]
-                ]
-            ]
+                    ],
+                ],
+            ],
         ]);
 
         $this->assertEquals(
             'Information',
             $doc->content,
-            'unexpected content'
+            'unexpected content',
         );
     }
     private function enrichDocument(
-        array $data
+        array $data,
     ): DocumentInterface {
 
         $resourceLoader = $this->createStub(
-            ResourceLoader::class
+            ResourceLoader::class,
         );
         $orga = TestResourceFactory::create([
             'url' => '/orga.php',
@@ -315,9 +315,9 @@ class ProductDocumentEnricherTest extends TestCase
                 'citygovOrganisation' => [
                     'name' => 'orgaName',
                     'token' => 'token.A',
-                    'synonymList' => ['Synonym1', 'Synonym2']
-                ]
-            ]
+                    'synonymList' => ['Synonym1', 'Synonym2'],
+                ],
+            ],
         ]);
         $resourceLoader->expects($this->any())
             ->method('load')
@@ -325,7 +325,7 @@ class ProductDocumentEnricherTest extends TestCase
                 if ($location->location === 'throwException') {
                     throw new InvalidResourceException(
                         $location,
-                        'throw for test'
+                        'throw for test',
                     );
                 }
                 if ($location->location === '/orga.php') {
@@ -334,7 +334,7 @@ class ProductDocumentEnricherTest extends TestCase
                 throw new ResourceNotFoundException($location);
             });
         $organisationEnricher = $this->createStub(
-            OrganisationDocumentEnricher::class
+            OrganisationDocumentEnricher::class,
         );
         $organisationEnricher->expects($this->any())
             ->method('enrichOrganisationPath')
@@ -344,7 +344,7 @@ class ProductDocumentEnricherTest extends TestCase
             });
         $enricher = new ProductDocumentEnricher(
             $resourceLoader,
-            $organisationEnricher
+            $organisationEnricher,
         );
         $doc = new IndexSchema2xDocument();
 
