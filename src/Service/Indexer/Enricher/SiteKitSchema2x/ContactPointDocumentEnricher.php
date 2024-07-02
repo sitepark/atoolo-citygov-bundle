@@ -34,9 +34,7 @@ use Atoolo\Search\Service\Indexer\IndexSchema2xDocument;
  */
 class ContactPointDocumentEnricher implements DocumentEnricher
 {
-    public function cleanup(): void
-    {
-    }
+    public function cleanup(): void {}
 
     /**
      * @throws DocumentEnrichingException
@@ -44,7 +42,7 @@ class ContactPointDocumentEnricher implements DocumentEnricher
     public function enrichDocument(
         Resource $resource,
         IndexDocument $doc,
-        string $processId
+        string $processId,
     ): IndexDocument {
 
         if (
@@ -56,11 +54,11 @@ class ContactPointDocumentEnricher implements DocumentEnricher
 
         /** @var ContactPoint $contactPoint */
         $contactPoint = $resource->data->getAssociativeArray(
-            'metadata.contactPoint'
+            'metadata.contactPoint',
         );
         return $this->enrichDocumentForContactPoint(
             $contactPoint,
-            $doc
+            $doc,
         );
     }
 
@@ -72,7 +70,7 @@ class ContactPointDocumentEnricher implements DocumentEnricher
      */
     private function enrichDocumentForContactPoint(
         array $contactPoint,
-        IndexDocument $doc
+        IndexDocument $doc,
     ): IndexDocument {
 
         $phoneList = [];
@@ -94,7 +92,7 @@ class ContactPointDocumentEnricher implements DocumentEnricher
         $doc->sp_citygov_email = $emailList;
 
         $addressSearchValue = $this->toAddressSearchValue(
-            $contactPoint['addressData'] ?? []
+            $contactPoint['addressData'] ?? [],
         );
 
         $doc->sp_citygov_address = $addressSearchValue;
@@ -109,7 +107,7 @@ class ContactPointDocumentEnricher implements DocumentEnricher
     private function toAddressSearchValue(array $address): string
     {
         return trim(($address['buildingName'] ?? '') . ' '
-            .  ($address['street'] ?? '') . ' '
-            .  ($address['housenumber'] ?? ''));
+            . ($address['street'] ?? '') . ' '
+            . ($address['housenumber'] ?? ''));
     }
 }
