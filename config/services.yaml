@@ -1,30 +1,30 @@
 services:
-  atoolo.resource.citygovOrganisationHierarchyLoader:
+  atoolo_citygov.citygov_organisation_hierarchy_loader:
     class: Atoolo\Resource\Loader\SiteKitResourceHierarchyLoader
     arguments:
-      - "@atoolo.resource.resourceLoader"
+      - '@atoolo_resource.resource_loader'
       - "citygovOrganisation"
 
   Atoolo\CityGov\Service\Indexer\Enricher\SiteKitSchema2x\OrganisationDocumentEnricher:
     arguments:
-      - '@atoolo.resource.citygovOrganisationHierarchyLoader'
+      - '@atoolo_citygov.citygov_organisation_hierarchy_loader'
     tags:
-      - { name: 'atoolo.search.indexer.documentEnricher.schema2x', priority: 10 }
+      - { name: 'atoolo_search.indexer.document_enricher.schema2x', priority: 10 }
 
   Atoolo\CityGov\Service\Indexer\Enricher\SiteKitSchema2x\ProductDocumentEnricher:
     arguments:
-      - '@atoolo.resource.resourceLoader'
+      - '@atoolo_resource.resource_loader'
       - '@Atoolo\CityGov\Service\Indexer\Enricher\SiteKitSchema2x\OrganisationDocumentEnricher'
     tags:
-      - { name: 'atoolo.search.indexer.documentEnricher.schema2x', priority: 10 }
+      - { name: 'atoolo_search.indexer.document_enricher.schema2x', priority: 10 }
 
   Atoolo\CityGov\Service\Indexer\Enricher\SiteKitSchema2x\PersonDocumentEnricher:
     arguments:
-      - '@atoolo.resource.resourceLoader'
+      - '@atoolo_resource.resource_loader'
       - '@Atoolo\CityGov\Service\Indexer\Enricher\SiteKitSchema2x\OrganisationDocumentEnricher'
     tags:
-      - { name: 'atoolo.search.indexer.documentEnricher.schema2x', priority: 10 }
+      - { name: 'atoolo_search.indexer.document_enricher.schema2x', priority: 10 }
 
   Atoolo\CityGov\Service\Indexer\Enricher\SiteKitSchema2x\ContactPointDocumentEnricher:
     tags:
-      - { name: 'atoolo.search.indexer.documentEnricher.schema2x', priority: 9 }
+      - { name: 'atoolo_search.indexer.document_enricher.schema2x', priority: 9 }
