@@ -134,6 +134,7 @@ class ProductDocumentEnricher implements DocumentEnricher
             $resource->data->getArray(
                 'metadata.citygovProduct.content',
             ),
+            $resource,
         );
         $cleanContent = preg_replace(
             '/\s+/',
