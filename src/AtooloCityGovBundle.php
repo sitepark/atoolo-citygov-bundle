@@ -18,7 +18,15 @@ class AtooloCityGovBundle extends Bundle
 {
     public function build(ContainerBuilder $container): void
     {
+        $container->setParameter(
+            'atoolo_citygov.src_dir',
+            __DIR__,
+        );
         $configDir = __DIR__ . '/../config';
+        $container->setParameter(
+            'atoolo_citygov.config_dir',
+            $configDir,
+        );
 
         $loader = new GlobFileLoader(new FileLocator($configDir));
         $loader->setResolver(
@@ -28,7 +36,7 @@ class AtooloCityGovBundle extends Bundle
                 ],
             ),
         );
-
+        $loader->load('graphql.yaml');
         $loader->load('services.yaml');
     }
 }
