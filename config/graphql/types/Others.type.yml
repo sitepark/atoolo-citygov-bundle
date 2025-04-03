@@ -1,0 +1,5 @@
+OnlineServiceFeature:
+  type: "object"
+  inherits: [TeaserFeature]
+  config:
+    interfaces: [TeaserFeature]
