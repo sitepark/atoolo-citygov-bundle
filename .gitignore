@@ -7,4 +7,6 @@ composer.lock
 /var/log/*
 !var/log/.gitkeep
 /tools
+/target
 .phpactor.json
+.phpunit.result.cache

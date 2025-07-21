@@ -70,6 +70,7 @@ class OrganisationDocumentEnricher implements DocumentEnricher
         $doc->sp_sortvalue = $name;
         if (!empty($name)) {
             $doc->sp_citygov_startletter = mb_substr($name, 0, 1);
+            $doc->sp_startletter = mb_substr($name, 0, 1);
         }
 
         $doc->sp_citygov_organisationtoken = [$resource->data->getString(
