@@ -79,6 +79,7 @@ class ProductDocumentEnricher implements DocumentEnricher
         );
         if (!empty($name)) {
             $doc->sp_citygov_startletter = mb_substr($name, 0, 1);
+            $doc->sp_startletter = mb_substr($name, 0, 1);
         }
         $doc->sp_sortvalue = $name;
 

@@ -89,9 +89,8 @@ class PersonDocumentEnricher implements DocumentEnricher
             $lastname . 'aaa' . $firstname,
         );
         $doc->sp_sortvalue = $sortName;
-        if ($lastname !== '') {
-            $doc->sp_citygov_startletter = mb_substr($sortName, 0, 1);
-        }
+        $doc->sp_citygov_startletter = mb_substr($sortName, 0, 1);
+        $doc->sp_startletter = mb_substr($sortName, 0, 1);
 
         try {
             $doc = $this->enrichPersonOrganisations($resource, $doc);
