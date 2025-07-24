@@ -1,4 +1,5 @@
 services:
+
   atoolo_citygov.citygov_organisation_hierarchy_loader:
     class: Atoolo\Resource\Loader\SiteKitResourceHierarchyLoader
     arguments:
@@ -13,6 +14,8 @@ services:
 
   Atoolo\CityGov\Service\Indexer\Enricher\SiteKitSchema2x\ProductDocumentEnricher:
     arguments:
+      - '@atoolo_citygov.resource_channel'
+      - '@atoolo_search.indexer.solr_index_service'
       - '@atoolo_resource.resource_loader'
       - '@Atoolo\CityGov\Service\Indexer\Enricher\SiteKitSchema2x\OrganisationDocumentEnricher'
     tags:
@@ -30,8 +33,16 @@ services:
       - { name: 'atoolo_search.indexer.document_enricher.schema2x', priority: 9 }
 
   # GraphQL
-
   atoolo_citygov.graphql.factory.online_service_feature:
     class: Atoolo\CityGov\Service\GraphQL\Factory\OnlineServiceFeatureFactory
     tags:
       - { name: 'atoolo_graphql_search.teaser_feature_factory' }
+
+  atoolo_citygov.resource_channel_factory:
+    class: Atoolo\CityGov\Factory\ChannelAttributesFactory
+    arguments:
+      - '@atoolo_resource.resource_channel'
+
+  atoolo_citygov.resource_channel:
+    class: Atoolo\CityGov\ChannelAttributes
+    factory: [ '@atoolo_citygov.resource_channel_factory', 'create' ]
