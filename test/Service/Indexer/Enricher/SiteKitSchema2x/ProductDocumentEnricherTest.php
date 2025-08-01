@@ -54,7 +54,8 @@ class ProductDocumentEnricherTest extends TestCase
         $this->solrIndexService = $this->createMock(SolrIndexService::class);
         $this->solrIndexService->method('updater')->willReturn($this->solrIndexUpdater);
 
-        $resource  = new Resource('de_DE',
+        $resource  = new Resource(
+            'de_DE',
             'id1',
             'resource name',
             'citygovProduct',

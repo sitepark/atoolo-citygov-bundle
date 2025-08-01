@@ -61,7 +61,7 @@ class OrganisationDocumentEnricherTest extends TestCase
         $enricher = new OrganisationDocumentEnricher(
             new ChannelAttributes(false),
             $this->solrIndexService,
-            $hierarchyLoader
+            $hierarchyLoader,
         );
         $enricher->cleanup();
     }
