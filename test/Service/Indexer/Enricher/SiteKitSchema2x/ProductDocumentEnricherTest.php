@@ -4,6 +4,13 @@ declare(strict_types=1);
 
 namespace Atoolo\CityGov\Test\Service\Indexer\Enricher\SiteKitSchema2x;
 
+use Atoolo\CityGov\ChannelAttributes;
+use Atoolo\Resource\DataBag;
+use Atoolo\Resource\Resource;
+use Atoolo\Resource\ResourceLanguage;
+use Atoolo\Search\Service\Indexer\SolrIndexService;
+use Atoolo\Search\Service\Indexer\SolrIndexUpdater;
+use PHPUnit\Framework\MockObject\Rule\InvokedCount;
 use Atoolo\CityGov\Service\Indexer\Enricher\{
     SiteKitSchema2x\OrganisationDocumentEnricher,
     SiteKitSchema2x\ProductDocumentEnricher
@@ -22,6 +29,75 @@ use Solarium\Core\Query\DocumentInterface;
 #[CoversClass(ProductDocumentEnricher::class)]
 class ProductDocumentEnricherTest extends TestCase
 {
+    private SolrIndexService $solrIndexService;
+
+    private SolrIndexUpdater $solrIndexUpdater;
+
+    private ResourceLoader $resourceLoader;
+
+    private OrganisationDocumentEnricher $organisationEnricher;
+
+    private ProductDocumentEnricher $productEnricher;
+    /**
+     * @throws Exception
+     */
+    protected function setUp(): void
+    {
+        $doc = $this->createStub(IndexSchema2xDocument::class);
+        $this->solrIndexUpdater = $this->createMock(SolrIndexUpdater::class);
+        $this->solrIndexUpdater->method('createDocument')
+            ->willReturn($doc);
+        $updateResult = $this->createStub(\Solarium\QueryType\Update\Result::class);
+        $this->solrIndexUpdater->method('update')
+            ->willReturn($updateResult);
+
+        $this->solrIndexService = $this->createMock(SolrIndexService::class);
+        $this->solrIndexService->method('updater')->willReturn($this->solrIndexUpdater);
+
+        $resource  = new Resource('de_DE',
+            'id1',
+            'resource name',
+            'citygovProduct',
+            ResourceLanguage::of('de_DE'),
+            new DataBag([]),
+        );
+        $this->resourceLoader = $this->createStub(
+            ResourceLoader::class,
+        );
+        $this->resourceLoader->expects($this->any())
+            ->method('load')
+            ->willReturnCallback(function ($location) use ($resource) {
+                if ($location->location === 'throwException') {
+                    throw new InvalidResourceException(
+                        $location,
+                        'throw for test',
+                    );
+                }
+                if ($location->location === '/orga.php') {
+                    return $resource;
+                }
+                throw new ResourceNotFoundException($location);
+            });
+
+        $this->organisationEnricher = $this->createStub(
+            OrganisationDocumentEnricher::class,
+        );
+        $this->organisationEnricher->expects($this->any())
+            ->method('enrichOrganisationPath')
+            ->willReturnCallback(function ($resource, $doc) {
+                $doc->sp_organisation = 12;
+                return $doc;
+            });
+
+        $this->productEnricher = new ProductDocumentEnricher(
+            new ChannelAttributes(false),
+            $this->solrIndexService,
+            $this->resourceLoader,
+            $this->organisationEnricher,
+        );
+
+    }
+
     /**
      * @throws Exception
      */
@@ -37,6 +113,8 @@ class ProductDocumentEnricherTest extends TestCase
             ->method('cleanup');
 
         $enricher = new ProductDocumentEnricher(
+            new ChannelAttributes(false),
+            $this->solrIndexService,
             $resourceLoader,
             $organisationEnricher,
         );
@@ -299,57 +377,106 @@ class ProductDocumentEnricherTest extends TestCase
             'unexpected content',
         );
     }
+
+    /**
+     * @throws Exception
+     */
+    public function testAddNonOfTwoAlternativeDocument(): void
+    {
+        $this->solrIndexUpdater->expects($this->never())
+            ->method('addDocument');
+        $this->solrIndexUpdater->expects($this->never())
+            ->method('update');
+
+        $data = [
+            'objectType' => 'citygovProduct',
+            'metadata' => [
+                'citygovProduct' => [
+                    'name' => 'productName',
+                    'alternativeNameList' => [
+                        'second name',
+                        'third name',
+                    ],
+                ],
+            ],
+        ];
+        $this->enrichDocument($data);
+    }
+
+
+    /**
+     * @throws Exception
+     */
+    public function testAddTwoOfTwoAlternativeDocument(): void
+    {
+        $this->solrIndexUpdater->expects(new InvokedCount(2))
+            ->method('addDocument');
+        $this->solrIndexUpdater->expects($this->once())
+            ->method('update');
+
+        $data = [
+            'objectType' => 'citygovProduct',
+            'metadata' => [
+                'citygovProduct' => [
+                    'name' => 'productName',
+                    'alternativeNameList' => [
+                        'second name',
+                        'third name',
+                    ],
+                ],
+            ],
+        ];
+        $enricher = new ProductDocumentEnricher(
+            new ChannelAttributes(true),
+            $this->solrIndexService,
+            $this->resourceLoader,
+            $this->organisationEnricher,
+        );
+        $doc = new IndexSchema2xDocument();
+        $resource = TestResourceFactory::create($data);
+
+        $enricher->enrichDocument($resource, $doc, '');
+        $this->testCleanup();
+    }
+
+
+    /**
+     * @throws Exception
+     */
+    public function testAddNOAlternativeDocument(): void
+    {
+        $this->solrIndexUpdater->expects($this->never())
+            ->method('addDocument');
+        $this->solrIndexUpdater->expects($this->never())
+            ->method('update');
+
+        $data = [
+            'objectType' => 'citygovProduct',
+            'metadata' => [
+                'citygovProduct' => [
+                    'name' => 'productName',
+                ],
+            ],
+        ];
+        $enricher = new ProductDocumentEnricher(
+            new ChannelAttributes(true),
+            $this->solrIndexService,
+            $this->resourceLoader,
+            $this->organisationEnricher,
+        );
+        $doc = new IndexSchema2xDocument();
+        $resource = TestResourceFactory::create($data);
+
+        $enricher->enrichDocument($resource, $doc, '');
+        $this->testCleanup();
+    }
+
+
     private function enrichDocument(
         array $data,
     ): DocumentInterface {
-
-        $resourceLoader = $this->createStub(
-            ResourceLoader::class,
-        );
-        $orga = TestResourceFactory::create([
-            'url' => '/orga.php',
-            'id' => '12',
-            'name' => 'orga',
-            'objectType' => 'citygovOrganisation',
-            'metadata' => [
-                'citygovOrganisation' => [
-                    'name' => 'orgaName',
-                    'token' => 'token.A',
-                    'synonymList' => ['Synonym1', 'Synonym2'],
-                ],
-            ],
-        ]);
-        $resourceLoader->expects($this->any())
-            ->method('load')
-            ->willReturnCallback(function ($location) use ($orga) {
-                if ($location->location === 'throwException') {
-                    throw new InvalidResourceException(
-                        $location,
-                        'throw for test',
-                    );
-                }
-                if ($location->location === '/orga.php') {
-                    return $orga;
-                }
-                throw new ResourceNotFoundException($location);
-            });
-        $organisationEnricher = $this->createStub(
-            OrganisationDocumentEnricher::class,
-        );
-        $organisationEnricher->expects($this->any())
-            ->method('enrichOrganisationPath')
-            ->willReturnCallback(function ($resource, $doc) {
-                $doc->sp_organisation = 12;
-                return $doc;
-            });
-        $enricher = new ProductDocumentEnricher(
-            $resourceLoader,
-            $organisationEnricher,
-        );
-        $doc = new IndexSchema2xDocument();
-
         $resource = TestResourceFactory::create($data);
-
-        return $enricher->enrichDocument($resource, $doc, '');
+        $doc = new IndexSchema2xDocument();
+        return $this->productEnricher->enrichDocument($resource, $doc, '');
     }
 }

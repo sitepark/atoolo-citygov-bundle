@@ -30,6 +30,8 @@ use Exception;
  */
 class ProductDocumentEnricher implements DocumentEnricher
 {
+    use AddAlternativeDocumentsTrait;
+
     public function __construct(
         private readonly ChannelAttributes $channelAttributes,
         private readonly SolrIndexService $solrIndexService,
@@ -43,7 +45,11 @@ class ProductDocumentEnricher implements DocumentEnricher
     }
 
     /**
-     * @throws DocumentEnrichingException
+     * @template E of IndexSchema2xDocument
+     * @param Resource $resource
+     * @param E $doc
+     * @param string $processId
+     * @return E
      */
     public function enrichDocument(
         Resource $resource,
@@ -60,6 +66,7 @@ class ProductDocumentEnricher implements DocumentEnricher
 
     /**
      * @template E of IndexSchema2xDocument
+     * @param Resource $resource
      * @param E $doc
      * @return E
      */
@@ -69,73 +76,32 @@ class ProductDocumentEnricher implements DocumentEnricher
     ): IndexDocument {
 
         $this->enrichName($resource->data->getString('metadata.citygovProduct.name'), $doc);
-        $this->enrichLeikaNumber($resource->data->getArray('metadata.citygovProduct.leikaKeys'), $doc);
+        /** @var string[] $leikaNumbers */
+        $leikaNumbers = $resource->data->getArray('metadata.citygovProduct.leikaKeys');
+        $this->enrichLeikaNumber($leikaNumbers, $doc);
         $this->enrichOrganisationPath($resource, $doc);
         $this->enrichOnlineServices(
             $resource->data->getArray('metadata.citygovProduct.onlineServices.serviceList'),
             $doc,
         );
+        $this->addAlternativeDocuments($resource, $doc);
 
-        $alternativeTitles = $resource->data->getArray('metadata.citygovProduct.alternativeNameList', []);
-        if ($this->channelAttributes->alternativeTitle && count($alternativeTitles) > 0) {
-            $updater = $this->solrIndexService->updater($resource->lang);
-            for ($i = 0; $i < count($alternativeTitles); $i++) {
-                /** @var IndexSchema2xDocument $alternativeTitleDocument */
-                // $alternativeTitleDocument = $updater->createDocument();
-                $alternativeTitleDocument = clone($doc);
-                $name = $alternativeTitles[$i];
-                $this->enrichName($name, $alternativeTitleDocument);
-                $alternativeTitleDocument->keywords = null;
-                $alternativeTitleDocument->description = null;
-                $alternativeTitleDocument->id = $doc->id . '-' . $i;
-                $alternativeTitleDocument->url = $doc->url . '?cg_at_id=' . $i;
-                $updater->addDocument($alternativeTitleDocument);
-            }
-            $updater->update();
-        }
+        /** @var string[] $synonymList */
+        $synonymList = $resource->data->getArray('metadata.citygovProduct.synonymList');
+        $doc->keywords = array_merge($doc->keywords ?? [], $synonymList);
 
-        $this->enrichSynonyms($resource->data->getArray('metadata.citygovProduct.synonymList'), $doc);
-        $doc = $this->enrichContent($resource, $doc);
+        $this->enrichContent($resource, $doc);
 
         return $doc;
     }
 
     /**
-     * @param string $name
-     * @param IndexDocument $doc
+     * @template E of IndexSchema2xDocument
+     * @param array<mixed> $onlineServiceList
+     * @param E $doc
      * @return void
      */
-    private function enrichName($name, &$doc): void
-    {
-        $name = str_replace(
-            ["ä", "ö", "ü", "Ä", "Ö", "Ü"],
-            ["ae", "oe", "ue", "Ae", "Oe", "Ue"],
-            $name,
-        );
-        if (!empty($name)) {
-            $doc->sp_name = $name;
-            $doc->sp_title = $name;
-            $doc->title = $name;
-            $doc->sp_citygov_startletter = mb_substr($name, 0, 1);
-            $doc->sp_startletter = mb_substr($name, 0, 1);
-        }
-        $doc->sp_sortvalue = $name;
-    }
-
-
-    /**
-     * @param string $name
-     * @param IndexDocument $doc
-     * @return void
-     */
-    private function enrichSynonyms($synonymList, &$doc): void
-    {
-        if (!empty($synonymList)) {
-            $doc->keywords = array_merge($doc->keywords ?? [], $synonymList);
-        }
-    }
-
-    private function enrichOnlineServices($onlineServiceList, $doc): void
+    private function enrichOnlineServices(array $onlineServiceList, IndexDocument $doc): void
     {
         if (!empty($onlineServiceList)) {
             $doc->sp_contenttype = array_merge(
@@ -145,8 +111,12 @@ class ProductDocumentEnricher implements DocumentEnricher
         }
     }
 
-
-    private function enrichLeikaNumber($leikaKeys, &$doc): void
+    /**
+     * @template E of IndexSchema2xDocument
+     * @phpstan-param array<string> $leikaKeys
+     * @param E $doc
+     */
+    private function enrichLeikaNumber(array $leikaKeys, IndexDocument &$doc): void
     {
         if (!empty($leikaKeys)) {
             $doc->setMetaString('leikanumber', $leikaKeys);
@@ -155,13 +125,14 @@ class ProductDocumentEnricher implements DocumentEnricher
 
     /**
      * @template E of IndexSchema2xDocument
+     * @param Resource $resource
      * @param E $doc
-     * @return E
+     * @return void
      */
     private function enrichContent(
         Resource $resource,
-        IndexDocument $doc,
-    ): IndexDocument {
+        IndexDocument &$doc,
+    ): void {
 
         $contentCollector = new ContentCollector([
             new RichtTextMatcher(),
@@ -182,19 +153,16 @@ class ProductDocumentEnricher implements DocumentEnricher
         $doc->content = trim(
             ($doc->content ?? '') . ' ' . $cleanContent,
         );
-
-        return $doc;
     }
 
     /**
      * @template E of IndexSchema2xDocument
      * @param E $doc
-     * @return E
      */
     private function enrichOrganisationPath(
         Resource $resource,
         IndexDocument &$doc,
-    ): IndexDocument {
+    ): void {
 
         /** @var Responsibility[] $responsibilityList */
         $responsibilityList = $resource->data->getAssociativeArray(
@@ -218,7 +186,7 @@ class ProductDocumentEnricher implements DocumentEnricher
                         $resource->lang,
                     ),
                 );
-                $doc = $this->organisationEnricher->enrichOrganisationPath(
+                $this->organisationEnricher->enrichOrganisationPath(
                     $primaryOrganisationResource,
                     $doc,
                 );
@@ -232,7 +200,5 @@ class ProductDocumentEnricher implements DocumentEnricher
                 $e,
             );
         }
-
-        return $doc;
     }
 }

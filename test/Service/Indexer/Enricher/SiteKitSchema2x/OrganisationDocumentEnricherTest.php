@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace Atoolo\CityGov\Test\Service\Indexer\Enricher\SiteKitSchema2x;
 
+use Atoolo\CityGov\ChannelAttributes;
+use Atoolo\Search\Service\Indexer\SolrIndexService;
+use Atoolo\Search\Service\Indexer\SolrIndexUpdater;
+use phpDocumentor\Reflection\Types\Void_;
+use PHPUnit\Framework\MockObject\Rule\InvokedCount;
 use Atoolo\CityGov\Service\Indexer\Enricher\{
     SiteKitSchema2x\OrganisationDocumentEnricher
 };
@@ -15,10 +20,33 @@ use Atoolo\Search\Service\Indexer\IndexSchema2xDocument;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\MockObject\MockObject;
 
 #[CoversClass(OrganisationDocumentEnricher::class)]
 class OrganisationDocumentEnricherTest extends TestCase
 {
+    private SolrIndexService&MockObject $solrIndexService;
+
+    private SolrIndexUpdater&MockObject $solrIndexUpdater;
+
+    /**
+     * @throws Exception
+     */
+    protected function setUp(): void
+    {
+        $doc = $this->createStub(IndexSchema2xDocument::class);
+        $this->solrIndexUpdater = $this->createMock(SolrIndexUpdater::class);
+        $this->solrIndexUpdater->method('addDocument');
+        $this->solrIndexUpdater->method('createDocument')
+            ->willReturn($doc);
+        $updateResult = $this->createStub(\Solarium\QueryType\Update\Result::class);
+        $this->solrIndexUpdater->method('update')
+            ->willReturn($updateResult);
+
+        $this->solrIndexService = $this->createMock(SolrIndexService::class);
+        $this->solrIndexService->method('updater')->willReturn($this->solrIndexUpdater);
+    }
+
     /**
      * @throws Exception
      */
@@ -30,7 +58,11 @@ class OrganisationDocumentEnricherTest extends TestCase
         $hierarchyLoader->expects($this->once())
             ->method('cleanup');
 
-        $enricher = new OrganisationDocumentEnricher($hierarchyLoader);
+        $enricher = new OrganisationDocumentEnricher(
+            new ChannelAttributes(false),
+            $this->solrIndexService,
+            $hierarchyLoader
+        );
         $enricher->cleanup();
     }
 
@@ -219,12 +251,40 @@ class OrganisationDocumentEnricherTest extends TestCase
             ));
 
         $enricher = new OrganisationDocumentEnricher(
+            new ChannelAttributes(false),
+            $this->solrIndexService,
             $hierarchyLoader,
         );
         $doc = $this->createMock(IndexSchema2xDocument::class);
 
         $this->expectException(DocumentEnrichingException::class);
         $enricher->enrichOrganisationPath($resource, $doc);
+    }
+
+
+    /**
+     * @throws Exception
+     */
+    public function testAddAlternativeDocument(): void
+    {
+        $this->solrIndexUpdater->expects(new InvokedCount(2))
+            ->method('addDocument');
+        $this->solrIndexUpdater->expects($this->once())
+            ->method('update');
+
+        $doc = $this->enrichDocument([
+            'objectType' => 'citygovOrganisation',
+            'metadata' => [
+                'citygovOrganisation' => [
+                    'name' => 'Name of orgnization',
+                    'alternativeNameList' => [
+                        'Alternative name',
+                        'Second name',
+                    ],
+                ],
+            ],
+        ]);
+        $this->testCleanup();
     }
 
     /**
@@ -237,6 +297,8 @@ class OrganisationDocumentEnricherTest extends TestCase
             SiteKitResourceHierarchyLoader::class,
         );
         $enricher = new OrganisationDocumentEnricher(
+            new ChannelAttributes(true),
+            $this->solrIndexService,
             $hierarchyLoader,
         );
         $doc = $this->createMock(IndexSchema2xDocument::class);
@@ -273,10 +335,12 @@ class OrganisationDocumentEnricherTest extends TestCase
             ->willReturn([$resource12, $resource123]);
 
         $enricher = new OrganisationDocumentEnricher(
+            new ChannelAttributes(false),
+            $this->solrIndexService,
             $hierarchyLoader,
         );
         $doc = $this->createMock(IndexSchema2xDocument::class);
-
-        return $enricher->enrichOrganisationPath($resource123, $doc);
+        $enricher->enrichOrganisationPath($resource123, $doc);
+        return $doc;
     }
 }

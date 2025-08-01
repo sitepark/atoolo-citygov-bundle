@@ -178,7 +178,7 @@ class PersonDocumentEnricher implements DocumentEnricher
             $organisationNameMergeList[] = $synonymList;
 
             if (($membership['primary'] ?? false) === true) {
-                $doc = $this->organisationEnricher->enrichOrganisationPath(
+                $this->organisationEnricher->enrichOrganisationPath(
                     $organisationResource,
                     $doc,
                 );
