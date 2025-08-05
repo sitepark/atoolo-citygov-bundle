@@ -7,11 +7,9 @@ use Atoolo\Resource\ResourceChannel;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
-#[AsAlias(id: 'atoolo_citygov.resource_channel_factory')]
 class ChannelAttributesFactory
 {
     public function __construct(
-        #[Autowire(param: 'atoolo_resource.resource_channel')]
         private readonly ResourceChannel $resourceChannel,
     ) {}
 

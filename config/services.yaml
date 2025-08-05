@@ -8,7 +8,7 @@ services:
 
   Atoolo\CityGov\Service\Indexer\Enricher\SiteKitSchema2x\OrganisationDocumentEnricher:
     arguments:
-      - '@atoolo_citygov.resource_channel'
+      - '@atoolo_citygov.resource_channel_attributes'
       - '@atoolo_search.indexer.solr_index_service'
       - '@atoolo_citygov.citygov_organisation_hierarchy_loader'
     tags:
@@ -16,7 +16,7 @@ services:
 
   Atoolo\CityGov\Service\Indexer\Enricher\SiteKitSchema2x\ProductDocumentEnricher:
     arguments:
-      - '@atoolo_citygov.resource_channel'
+      - '@atoolo_citygov.resource_channel_attributes'
       - '@atoolo_search.indexer.solr_index_service'
       - '@atoolo_resource.resource_loader'
       - '@Atoolo\CityGov\Service\Indexer\Enricher\SiteKitSchema2x\OrganisationDocumentEnricher'
@@ -40,11 +40,11 @@ services:
     tags:
       - { name: 'atoolo_graphql_search.teaser_feature_factory' }
 
-  atoolo_citygov.resource_channel_factory:
+  atoolo_citygov.resource_channel_attributes_factory:
     class: Atoolo\CityGov\Factory\ChannelAttributesFactory
     arguments:
       - '@atoolo_resource.resource_channel'
 
-  atoolo_citygov.resource_channel:
+  atoolo_citygov.resource_channel_attributes:
     class: Atoolo\CityGov\ChannelAttributes
-    factory: [ '@atoolo_citygov.resource_channel_factory', 'create' ]
+    factory: [ '@atoolo_citygov.resource_channel_attributes_factory', 'create' ]
