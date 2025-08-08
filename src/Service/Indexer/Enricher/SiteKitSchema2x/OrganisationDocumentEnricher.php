@@ -59,7 +59,7 @@ class OrganisationDocumentEnricher implements DocumentEnricher
         IndexDocument $doc,
     ): IndexDocument {
         $this->enrichName($resource->data->getString('metadata.citygovOrganisation.name'), $doc);
-        $this->enrichOrganisationPath($resource, $doc);
+        $doc = $this->enrichOrganisationPath($resource, $doc);
         $this->addAlternativeDocuments($resource, $doc);
 
         /** @var string[] $synonymList */
@@ -81,11 +81,13 @@ class OrganisationDocumentEnricher implements DocumentEnricher
     /**
      * @template E of IndexSchema2xDocument
      * @param E $doc
+     * @return E
+     * @throws DocumentEnrichingException
      */
     public function enrichOrganisationPath(
-        Resource $resource,
-        IndexDocument &$doc,
-    ): void {
+        Resource      $resource,
+        IndexDocument $doc,
+    ): IndexDocument {
         $doc->sp_organisation = (int) $resource->id;
 
         try {
@@ -108,5 +110,6 @@ class OrganisationDocumentEnricher implements DocumentEnricher
                 $e,
             );
         }
+        return $doc;
     }
 }

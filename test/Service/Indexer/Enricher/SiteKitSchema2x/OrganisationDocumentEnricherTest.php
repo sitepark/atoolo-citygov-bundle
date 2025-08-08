@@ -5,22 +5,20 @@ declare(strict_types=1);
 namespace Atoolo\CityGov\Test\Service\Indexer\Enricher\SiteKitSchema2x;
 
 use Atoolo\CityGov\ChannelAttributes;
-use Atoolo\Search\Service\Indexer\SolrIndexService;
-use Atoolo\Search\Service\Indexer\SolrIndexUpdater;
-use phpDocumentor\Reflection\Types\Void_;
-use PHPUnit\Framework\MockObject\Rule\InvokedCount;
-use Atoolo\CityGov\Service\Indexer\Enricher\{
-    SiteKitSchema2x\OrganisationDocumentEnricher
-};
+use Atoolo\CityGov\Service\Indexer\Enricher\{SiteKitSchema2x\OrganisationDocumentEnricher};
 use Atoolo\CityGov\Test\TestResourceFactory;
 use Atoolo\Resource\Loader\SiteKitResourceHierarchyLoader;
 use Atoolo\Resource\ResourceLocation;
 use Atoolo\Search\Exception\DocumentEnrichingException;
 use Atoolo\Search\Service\Indexer\IndexSchema2xDocument;
+use Atoolo\Search\Service\Indexer\SolrIndexService;
+use Atoolo\Search\Service\Indexer\SolrIndexUpdater;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\Exception;
-use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Rule\InvokedCount;
+use PHPUnit\Framework\TestCase;
+use Solarium\QueryType\Update\Result;
 
 #[CoversClass(OrganisationDocumentEnricher::class)]
 class OrganisationDocumentEnricherTest extends TestCase
@@ -39,7 +37,7 @@ class OrganisationDocumentEnricherTest extends TestCase
         $this->solrIndexUpdater->method('addDocument');
         $this->solrIndexUpdater->method('createDocument')
             ->willReturn($doc);
-        $updateResult = $this->createStub(\Solarium\QueryType\Update\Result::class);
+        $updateResult = $this->createStub(Result::class);
         $this->solrIndexUpdater->method('update')
             ->willReturn($updateResult);
 
@@ -272,7 +270,7 @@ class OrganisationDocumentEnricherTest extends TestCase
         $this->solrIndexUpdater->expects($this->once())
             ->method('update');
 
-        $doc = $this->enrichDocument([
+        $this->enrichDocument([
             'objectType' => 'citygovOrganisation',
             'metadata' => [
                 'citygovOrganisation' => [

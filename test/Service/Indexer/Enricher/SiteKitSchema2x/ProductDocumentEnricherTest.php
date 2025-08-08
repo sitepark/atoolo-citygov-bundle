@@ -5,24 +5,22 @@ declare(strict_types=1);
 namespace Atoolo\CityGov\Test\Service\Indexer\Enricher\SiteKitSchema2x;
 
 use Atoolo\CityGov\ChannelAttributes;
-use Atoolo\Resource\DataBag;
-use Atoolo\Resource\Resource;
-use Atoolo\Resource\ResourceLanguage;
-use Atoolo\Search\Service\Indexer\SolrIndexService;
-use Atoolo\Search\Service\Indexer\SolrIndexUpdater;
-use PHPUnit\Framework\MockObject\Rule\InvokedCount;
-use Atoolo\CityGov\Service\Indexer\Enricher\{
-    SiteKitSchema2x\OrganisationDocumentEnricher,
-    SiteKitSchema2x\ProductDocumentEnricher
-};
+use Atoolo\CityGov\Service\Indexer\Enricher\{SiteKitSchema2x\OrganisationDocumentEnricher,
+    SiteKitSchema2x\ProductDocumentEnricher};
 use Atoolo\CityGov\Test\TestResourceFactory;
+use Atoolo\Resource\DataBag;
 use Atoolo\Resource\Exception\InvalidResourceException;
 use Atoolo\Resource\Exception\ResourceNotFoundException;
+use Atoolo\Resource\Resource;
+use Atoolo\Resource\ResourceLanguage;
 use Atoolo\Resource\ResourceLoader;
 use Atoolo\Search\Exception\DocumentEnrichingException;
 use Atoolo\Search\Service\Indexer\IndexSchema2xDocument;
+use Atoolo\Search\Service\Indexer\SolrIndexService;
+use Atoolo\Search\Service\Indexer\SolrIndexUpdater;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\Exception;
+use PHPUnit\Framework\MockObject\Rule\InvokedCount;
 use PHPUnit\Framework\TestCase;
 use Solarium\Core\Query\DocumentInterface;
 

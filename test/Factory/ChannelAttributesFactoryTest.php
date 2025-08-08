@@ -2,24 +2,20 @@
 
 namespace Atoolo\CityGov\Test\Factory;
 
-use Atoolo\CityGov\ChannelAttributes;
 use Atoolo\CityGov\Factory\ChannelAttributesFactory;
 use Atoolo\Resource\DataBag;
 use Atoolo\Resource\ResourceChannel;
 use Atoolo\Resource\ResourceTenant;
-use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
 
 class ChannelAttributesFactoryTest extends TestCase
 {
-    private ChannelAttributesFactory $factory;
-
     /**
      * Helper function
      * @param DataBag $attributes
-     * @return void
+     * @return ChannelAttributesFactory
      */
-    public function setChannelWithAttributes(DataBag $attributes): void
+    public function getChannelWithAttributes(DataBag $attributes): ChannelAttributesFactory
     {
         $resourceChannel = new ResourceChannel(
             'pub1',
@@ -29,7 +25,7 @@ class ChannelAttributesFactoryTest extends TestCase
             false,
             'internet',
             'de_DE',
-            '/var/www/publihser/',
+            '/var/www/publisher/',
             '/',
             '/',
             'www',
@@ -43,36 +39,36 @@ class ChannelAttributesFactoryTest extends TestCase
                 new DataBag([]),
             ),
         );
-        $this->factory = new ChannelAttributesFactory($resourceChannel);
+        return new ChannelAttributesFactory($resourceChannel);
     }
 
     /**
-     * @throws Exception
+     *
      */
     public function testEmpty(): void
     {
-        $this->setChannelWithAttributes(new DataBag([]));
-        $channelAttribute = $this->factory->create();
+        $factory = $this->getChannelWithAttributes(new DataBag([]));
+        $channelAttribute = $factory->create();
         $this->assertFalse($channelAttribute->addAlternativeDocuments);
     }
 
     /**
-     * @throws Exception
+     *
      */
     public function testFalse(): void
     {
-        $this->setChannelWithAttributes(new DataBag(['sp_vv_alternativeTitle' => false]));
-        $channelAttribute = $this->factory->create();
+        $factory = $this->getChannelWithAttributes(new DataBag(['sp_vv_alternativeTitle' => false]));
+        $channelAttribute = $factory->create();
         $this->assertFalse($channelAttribute->addAlternativeDocuments);
     }
 
     /**
-     * @throws Exception
+     *
      */
     public function testTrue(): void
     {
-        $this->setChannelWithAttributes(new DataBag(['sp_vv_alternativeTitle' => true]));
-        $channelAttribute = $this->factory->create();
+        $factory = $this->getChannelWithAttributes(new DataBag(['sp_vv_alternativeTitle' => true]));
+        $channelAttribute = $factory->create();
         $this->assertTrue($channelAttribute->addAlternativeDocuments);
     }
 }

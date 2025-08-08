@@ -6,7 +6,6 @@ namespace Atoolo\CityGov\Service\Indexer\Enricher\SiteKitSchema2x;
 
 use Atoolo\CityGov\ChannelAttributes;
 use Atoolo\Resource\Resource;
-use Atoolo\Resource\ResourceChannel;
 use Atoolo\Resource\ResourceLoader;
 use Atoolo\Resource\ResourceLocation;
 use Atoolo\Search\Exception\DocumentEnrichingException;
@@ -16,7 +15,6 @@ use Atoolo\Search\Service\Indexer\IndexDocument;
 use Atoolo\Search\Service\Indexer\IndexSchema2xDocument;
 use Atoolo\Search\Service\Indexer\SiteKit\RichtTextMatcher;
 use Atoolo\Search\Service\Indexer\SolrIndexService;
-use Atoolo\Search\Service\Indexer\SolrIndexUpdater;
 use Exception;
 
 /**
@@ -50,9 +48,10 @@ class ProductDocumentEnricher implements DocumentEnricher
      * @param E $doc
      * @param string $processId
      * @return E
+     * @throws DocumentEnrichingException
      */
     public function enrichDocument(
-        Resource $resource,
+        Resource      $resource,
         IndexDocument $doc,
         string $processId,
     ): IndexDocument {
@@ -69,9 +68,10 @@ class ProductDocumentEnricher implements DocumentEnricher
      * @param Resource $resource
      * @param E $doc
      * @return E
+     * @throws DocumentEnrichingException
      */
     private function enrichDocumentForProduct(
-        Resource $resource,
+        Resource      $resource,
         IndexDocument $doc,
     ): IndexDocument {
 
@@ -116,7 +116,7 @@ class ProductDocumentEnricher implements DocumentEnricher
      * @phpstan-param array<string> $leikaKeys
      * @param E $doc
      */
-    private function enrichLeikaNumber(array $leikaKeys, IndexDocument &$doc): void
+    private function enrichLeikaNumber(array $leikaKeys, IndexDocument $doc): void
     {
         if (!empty($leikaKeys)) {
             $doc->setMetaString('leikanumber', $leikaKeys);
@@ -130,8 +130,8 @@ class ProductDocumentEnricher implements DocumentEnricher
      * @return void
      */
     private function enrichContent(
-        Resource $resource,
-        IndexDocument &$doc,
+        Resource      $resource,
+        IndexDocument $doc,
     ): void {
 
         $contentCollector = new ContentCollector([
@@ -158,10 +158,11 @@ class ProductDocumentEnricher implements DocumentEnricher
     /**
      * @template E of IndexSchema2xDocument
      * @param E $doc
+     * @throws DocumentEnrichingException
      */
     private function enrichOrganisationPath(
-        Resource $resource,
-        IndexDocument &$doc,
+        Resource      $resource,
+        IndexDocument $doc,
     ): void {
 
         /** @var Responsibility[] $responsibilityList */

@@ -1,22 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Atoolo\CityGov\Service\Indexer\Enricher\SiteKitSchema2x;
 
 use Atoolo\Resource\Resource;
-use Atoolo\Resource\ResourceLanguage;
 use Atoolo\Search\Service\Indexer\IndexDocument;
 use Atoolo\Search\Service\Indexer\IndexSchema2xDocument;
-use Solarium\QueryType\Luke\ResponseParser\Index;
 
 trait AddAlternativeDocumentsTrait
 {
     /**
      * @template E of IndexSchema2xDocument
      * @param E $originDocument
-     * @return void
      */
     protected function addAlternativeDocuments(
-        Resource $resource,
+        Resource      $resource,
         IndexDocument $originDocument,
     ): void {
         // first: check publisher attribute 'sp_vv_alternativeTitle'
@@ -49,9 +48,8 @@ trait AddAlternativeDocumentsTrait
      * @template E of IndexSchema2xDocument
      * @param ?string $name
      * @param E $document
-     * @return void
      */
-    protected function enrichName(?string $name, IndexDocument &$document): void
+    protected function enrichName(?string $name, IndexDocument $document): void
     {
         if (!empty($name)) {
             $document->sp_name = $name;
