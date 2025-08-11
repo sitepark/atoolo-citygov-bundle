@@ -84,7 +84,7 @@ class PersonDocumentEnricher implements DocumentEnricher
          * `SchmittaaaOtto` is sorted first.
          */
         $sortName = str_replace(
-            ["ä","ö","ü", "Ä","Ö","Ü"],
+            ["ä", "ö", "ü", "Ä", "Ö", "Ü"],
             ["ae", "oe", "ue", "Ae", "Oe", "Ue"],
             $lastname . 'aaa' . $firstname,
         );
@@ -178,7 +178,7 @@ class PersonDocumentEnricher implements DocumentEnricher
             $organisationNameMergeList[] = $synonymList;
 
             if (($membership['primary'] ?? false) === true) {
-                $doc = $this->organisationEnricher->enrichOrganisationPath(
+                $this->organisationEnricher->enrichOrganisationPath(
                     $organisationResource,
                     $doc,
                 );

@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Atoolo\CityGov\Service\Indexer\Enricher\SiteKitSchema2x;
 
+use Atoolo\CityGov\ChannelAttributes;
 use Atoolo\Resource\Loader\SiteKitResourceHierarchyLoader;
 use Atoolo\Resource\Resource;
 use Atoolo\Search\Exception\DocumentEnrichingException;
 use Atoolo\Search\Service\Indexer\DocumentEnricher;
 use Atoolo\Search\Service\Indexer\IndexDocument;
 use Atoolo\Search\Service\Indexer\IndexSchema2xDocument;
+use Atoolo\Search\Service\Indexer\SolrIndexService;
 use Exception;
 
 /**
@@ -18,7 +20,11 @@ use Exception;
  */
 class OrganisationDocumentEnricher implements DocumentEnricher
 {
+    use AddAlternativeDocumentsTrait;
+
     public function __construct(
+        private readonly ChannelAttributes $channelAttributes,
+        private readonly SolrIndexService $solrIndexService,
         private readonly SiteKitResourceHierarchyLoader $hierarchyLoader,
     ) {}
 
@@ -52,44 +58,31 @@ class OrganisationDocumentEnricher implements DocumentEnricher
         Resource $resource,
         IndexDocument $doc,
     ): IndexDocument {
+        $this->enrichName($resource->data->getString('metadata.citygovOrganisation.name'), $doc);
+        $doc = $this->enrichOrganisationPath($resource, $doc);
+        $this->addAlternativeDocuments($resource, $doc);
 
         /** @var string[] $synonymList */
-        $synonymList = $resource->data->getArray(
-            'metadata.citygovOrganisation.synonymList',
-        );
-
+        $synonymList = $resource->data->getArray('metadata.citygovOrganisation.synonymList');
         $doc->keywords = array_merge($doc->keywords ?? [], $synonymList);
-
-        $name = str_replace(
-            ["ä","ö","ü", "Ä","Ö","Ü"],
-            ["ae", "oe", "ue", "Ae", "Oe", "Ue"],
-            $resource->data->getString(
-                'metadata.citygovOrganisation.name',
-            ),
-        );
-        $doc->sp_sortvalue = $name;
-        if (!empty($name)) {
-            $doc->sp_citygov_startletter = mb_substr($name, 0, 1);
-            $doc->sp_startletter = mb_substr($name, 0, 1);
-        }
 
         $doc->sp_citygov_organisationtoken = [$resource->data->getString(
             'metadata.citygovOrganisation.token',
         )];
-
         $content = array_merge(
             [$doc->content ?? ''],
             $doc->sp_citygov_organisationtoken,
         );
         $doc->content = trim(implode(' ', $content));
 
-        return $this->enrichOrganisationPath($resource, $doc);
+        return $doc;
     }
 
     /**
      * @template E of IndexSchema2xDocument
      * @param E $doc
      * @return E
+     * @throws DocumentEnrichingException
      */
     public function enrichOrganisationPath(
         Resource $resource,
@@ -117,7 +110,6 @@ class OrganisationDocumentEnricher implements DocumentEnricher
                 $e,
             );
         }
-
         return $doc;
     }
 }
