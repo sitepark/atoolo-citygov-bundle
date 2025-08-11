@@ -37,9 +37,9 @@ class OrganisationDocumentEnricher implements DocumentEnricher
      * @throws DocumentEnrichingException
      */
     public function enrichDocument(
-        Resource      $resource,
+        Resource $resource,
         IndexDocument $doc,
-        string        $processId,
+        string $processId,
     ): IndexDocument {
 
         if ($resource->objectType !== 'citygovOrganisation') {
@@ -55,7 +55,7 @@ class OrganisationDocumentEnricher implements DocumentEnricher
      * @return E
      */
     private function enrichDocumentForOrganisation(
-        Resource      $resource,
+        Resource $resource,
         IndexDocument $doc,
     ): IndexDocument {
         $this->enrichName($resource->data->getString('metadata.citygovOrganisation.name'), $doc);
@@ -85,7 +85,7 @@ class OrganisationDocumentEnricher implements DocumentEnricher
      * @throws DocumentEnrichingException
      */
     public function enrichOrganisationPath(
-        Resource      $resource,
+        Resource $resource,
         IndexDocument $doc,
     ): IndexDocument {
         $doc->sp_organisation = (int) $resource->id;

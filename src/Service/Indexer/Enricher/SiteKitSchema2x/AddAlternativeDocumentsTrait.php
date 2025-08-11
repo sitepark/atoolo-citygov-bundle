@@ -15,7 +15,7 @@ trait AddAlternativeDocumentsTrait
      * @param E $originDocument
      */
     protected function addAlternativeDocuments(
-        Resource      $resource,
+        Resource $resource,
         IndexDocument $originDocument,
     ): void {
         // first: check publisher attribute 'sp_vv_alternativeTitle'

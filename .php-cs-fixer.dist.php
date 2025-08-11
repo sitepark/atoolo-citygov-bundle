@@ -9,4 +9,8 @@ $finder = (new \PhpCsFixer\Finder())
 return (new \PhpCsFixer\Config())
     ->setCacheFile('var/cache/php-cs-fixer')
     ->setFinder($finder)
-    ->setRules(['@PER-CS' => true]);
+    ->setRules([
+	    '@PER-CS' => true,
+	    'type_declaration_spaces' => true,
+	    'no_unused_imports' => true,
+    ]);

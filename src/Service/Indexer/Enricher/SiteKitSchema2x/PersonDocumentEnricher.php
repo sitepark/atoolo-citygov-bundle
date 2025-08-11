@@ -84,7 +84,7 @@ class PersonDocumentEnricher implements DocumentEnricher
          * `SchmittaaaOtto` is sorted first.
          */
         $sortName = str_replace(
-            ["ä","ö","ü", "Ä","Ö","Ü"],
+            ["ä", "ö", "ü", "Ä", "Ö", "Ü"],
             ["ae", "oe", "ue", "Ae", "Oe", "Ue"],
             $lastname . 'aaa' . $firstname,
         );

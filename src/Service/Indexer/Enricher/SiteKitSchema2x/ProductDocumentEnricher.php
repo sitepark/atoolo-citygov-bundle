@@ -51,7 +51,7 @@ class ProductDocumentEnricher implements DocumentEnricher
      * @throws DocumentEnrichingException
      */
     public function enrichDocument(
-        Resource      $resource,
+        Resource $resource,
         IndexDocument $doc,
         string $processId,
     ): IndexDocument {
@@ -71,7 +71,7 @@ class ProductDocumentEnricher implements DocumentEnricher
      * @throws DocumentEnrichingException
      */
     private function enrichDocumentForProduct(
-        Resource      $resource,
+        Resource $resource,
         IndexDocument $doc,
     ): IndexDocument {
 
@@ -130,7 +130,7 @@ class ProductDocumentEnricher implements DocumentEnricher
      * @return void
      */
     private function enrichContent(
-        Resource      $resource,
+        Resource $resource,
         IndexDocument $doc,
     ): void {
 
@@ -161,7 +161,7 @@ class ProductDocumentEnricher implements DocumentEnricher
      * @throws DocumentEnrichingException
      */
     private function enrichOrganisationPath(
-        Resource      $resource,
+        Resource $resource,
         IndexDocument $doc,
     ): void {
 
