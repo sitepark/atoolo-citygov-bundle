@@ -3,7 +3,7 @@ overblog_graphql:
     schema:
       query: RootQuery
       mutation: RootMutation
-      types: [OnlineServiceFeature]
+      types: [OnlineServiceFeature, OnlineService]
     mappings:
       types:
       - type: attribute

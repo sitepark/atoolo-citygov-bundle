@@ -9,4 +9,15 @@ use Atoolo\GraphQL\Search\Types\TeaserFeature;
 /**
  * @codeCoverageIgnore
  */
-class OnlineServiceFeature extends TeaserFeature {}
+class OnlineServiceFeature extends TeaserFeature
+{
+    /**
+     * @param OnlineService[] $onlineServices
+     */
+    public function __construct(
+        ?string $label = null,
+        public readonly array $onlineServices = [],
+    ) {
+        parent::__construct($label);
+    }
+}
