@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace Atoolo\CityGov\Test\Service\GraphQL\Factory;
 
 use Atoolo\CityGov\Service\GraphQL\Factory\OnlineServiceFeatureFactory;
+use Atoolo\CityGov\Service\GraphQL\Types\OnlineService;
 use Atoolo\CityGov\Service\GraphQL\Types\OnlineServiceFeature;
+use Atoolo\GraphQL\Search\Types\Link;
 use Atoolo\Resource\DataBag;
 use Atoolo\Resource\Resource;
 use Atoolo\Resource\ResourceLanguage;
@@ -29,13 +31,21 @@ class OnlineServiceFeatureFactoryTest extends TestCase
                 'citygovProduct' => [
                     'onlineServices' => [
                         'some' => 'data',
+                        'serviceList' => [
+                            'items' => [[
+                                'url' => '/path/to/online/service',
+                            ]],
+                        ],
                     ],
                 ],
             ],
         ]);
         $onlineServiceFeatures = $this->factory->create($resource);
-        $this->assertInstanceOf(
-            OnlineServiceFeature::class,
+        $this->assertEquals(
+            new OnlineServiceFeature(
+                null,
+                [new OnlineService(new Link('/path/to/online/service'))],
+            ),
             $onlineServiceFeatures[0],
         );
     }
