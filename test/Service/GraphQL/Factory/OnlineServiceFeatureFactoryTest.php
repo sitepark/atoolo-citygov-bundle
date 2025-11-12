@@ -16,6 +16,7 @@ use Atoolo\Resource\ResourceLoader;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 
 #[CoversClass(OnlineServiceFeatureFactory::class)]
 class OnlineServiceFeatureFactoryTest extends TestCase
@@ -24,16 +25,20 @@ class OnlineServiceFeatureFactoryTest extends TestCase
 
     private ResourceLoader&MockObject $resourceLoader;
 
+    private LoggerInterface&MockObject $logger;
+
     private LinkFactory&MockObject $linkFactory;
 
     public function setUp(): void
     {
         $this->resourceLoader = $this->createMock(ResourceLoader::class);
         $this->linkFactory = $this->createMock(LinkFactory::class);
+        $this->logger = $this->createMock(LoggerInterface::class);
         $this->factory = new OnlineServiceFeatureFactory(
             $this->resourceLoader,
             $this->linkFactory,
         );
+        $this->factory->setLogger($this->logger);
     }
 
     public function testCreate()
@@ -74,7 +79,7 @@ class OnlineServiceFeatureFactoryTest extends TestCase
         );
     }
 
-    public function testCreateFail()
+    public function testCreateNoOnlineServices()
     {
         $resource = $this->createResource([
             'metadata' => [
@@ -85,6 +90,31 @@ class OnlineServiceFeatureFactoryTest extends TestCase
         ]);
         $onlineServiceFeatures = $this->factory->create($resource);
         $this->assertEmpty($onlineServiceFeatures);
+    }
+
+    public function testCreateUnknownResource()
+    {
+        $onlineServiceResourceUrl =  '/path/to/online/service';
+        $resource = $this->createResource([
+            'metadata' => [
+                'citygovProduct' => [
+                    'onlineServices' => [
+                        'some' => 'data',
+                        'serviceList' => [
+                            'items' => [[
+                                'url' => $onlineServiceResourceUrl,
+                            ]],
+                        ],
+                    ],
+                ],
+            ],
+        ]);
+        $this->resourceLoader
+            ->method('load')
+            ->with($onlineServiceResourceUrl)
+            ->willThrowException(new \Exception());
+        $this->logger->expects($this->once())->method('error');
+        $this->factory->create($resource);
     }
 
     /**
