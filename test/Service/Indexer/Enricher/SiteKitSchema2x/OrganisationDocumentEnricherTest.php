@@ -4,21 +4,66 @@ declare(strict_types=1);
 
 namespace Atoolo\CityGov\Test\Service\Indexer\Enricher\SiteKitSchema2x;
 
-// phpcs:ignore
-use Atoolo\CityGov\Service\Indexer\Enricher\SiteKitSchema2x\OrganisationDocumentEnricher;
+use Atoolo\CityGov\ChannelAttributes;
+use Atoolo\CityGov\Service\Indexer\Enricher\{SiteKitSchema2x\OrganisationDocumentEnricher};
 use Atoolo\CityGov\Test\TestResourceFactory;
 use Atoolo\Resource\Loader\SiteKitResourceHierarchyLoader;
-use Atoolo\Resource\Resource;
 use Atoolo\Resource\ResourceLocation;
 use Atoolo\Search\Exception\DocumentEnrichingException;
 use Atoolo\Search\Service\Indexer\IndexSchema2xDocument;
+use Atoolo\Search\Service\Indexer\SolrIndexService;
+use Atoolo\Search\Service\Indexer\SolrIndexUpdater;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\Exception;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Rule\InvokedCount;
 use PHPUnit\Framework\TestCase;
+use Solarium\QueryType\Update\Result;
 
 #[CoversClass(OrganisationDocumentEnricher::class)]
 class OrganisationDocumentEnricherTest extends TestCase
 {
+    private SolrIndexService&MockObject $solrIndexService;
+
+    private SolrIndexUpdater&MockObject $solrIndexUpdater;
+
+    /**
+     * @throws Exception
+     */
+    protected function setUp(): void
+    {
+        $doc = $this->createStub(IndexSchema2xDocument::class);
+        $this->solrIndexUpdater = $this->createMock(SolrIndexUpdater::class);
+        $this->solrIndexUpdater->method('addDocument');
+        $this->solrIndexUpdater->method('createDocument')
+            ->willReturn($doc);
+        $updateResult = $this->createStub(Result::class);
+        $this->solrIndexUpdater->method('update')
+            ->willReturn($updateResult);
+
+        $this->solrIndexService = $this->createMock(SolrIndexService::class);
+        $this->solrIndexService->method('updater')->willReturn($this->solrIndexUpdater);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function testCleanup(): void
+    {
+        $hierarchyLoader = $this->createMock(
+            SiteKitResourceHierarchyLoader::class,
+        );
+        $hierarchyLoader->expects($this->once())
+            ->method('cleanup');
+
+        $enricher = new OrganisationDocumentEnricher(
+            new ChannelAttributes(false),
+            $this->solrIndexService,
+            $hierarchyLoader,
+        );
+        $enricher->cleanup();
+    }
+
     /**
      * @throws Exception
      */
@@ -31,7 +76,7 @@ class OrganisationDocumentEnricherTest extends TestCase
         $this->assertEquals(
             [],
             $doc->getFields(),
-            'document should be empty'
+            'document should be empty',
         );
     }
 
@@ -44,15 +89,15 @@ class OrganisationDocumentEnricherTest extends TestCase
             'objectType' => 'citygovOrganisation',
             'metadata' => [
                 'citygovOrganisation' => [
-                    'synonymList' => ['blue', 'red']
-                ]
-            ]
+                    'synonymList' => ['blue', 'red'],
+                ],
+            ],
         ]);
 
         $this->assertEquals(
             ['blue', 'red'],
             $doc->keywords,
-            'unexpected synonyms as keywords'
+            'unexpected synonyms as keywords',
         );
     }
 
@@ -65,15 +110,15 @@ class OrganisationDocumentEnricherTest extends TestCase
             'objectType' => 'citygovOrganisation',
             'metadata' => [
                 'citygovOrganisation' => [
-                    'name' => 'Orga'
-                ]
-            ]
+                    'name' => 'Orga',
+                ],
+            ],
         ]);
 
         $this->assertEquals(
             'O',
             $doc->sp_citygov_startletter,
-            'unexpected startletter'
+            'unexpected startletter',
         );
     }
 
@@ -86,15 +131,15 @@ class OrganisationDocumentEnricherTest extends TestCase
             'objectType' => 'citygovOrganisation',
             'metadata' => [
                 'citygovOrganisation' => [
-                    'token' => '123'
-                ]
-            ]
+                    'token' => '123',
+                ],
+            ],
         ]);
 
         $this->assertEquals(
             ['123'],
             $doc->sp_citygov_organisationtoken,
-            'unexpected token'
+            'unexpected token',
         );
     }
 
@@ -104,15 +149,15 @@ class OrganisationDocumentEnricherTest extends TestCase
             'objectType' => 'citygovOrganisation',
             'metadata' => [
                 'citygovOrganisation' => [
-                    'token' => '123'
-                ]
-            ]
+                    'token' => '123',
+                ],
+            ],
         ]);
 
         $this->assertEquals(
             '123',
             $doc->content,
-            'unexpected token'
+            'unexpected token',
         );
     }
 
@@ -126,15 +171,15 @@ class OrganisationDocumentEnricherTest extends TestCase
             'objectType' => 'citygovOrganisation',
             'metadata' => [
                 'citygovOrganisation' => [
-                    'name' => 'Orga'
-                ]
-            ]
+                    'name' => 'Orga',
+                ],
+            ],
         ]);
 
         $this->assertEquals(
             'Orga',
             $doc->sp_sortvalue,
-            'unexpected sortvalue'
+            'unexpected sortvalue',
         );
     }
 
@@ -145,14 +190,14 @@ class OrganisationDocumentEnricherTest extends TestCase
     {
         $doc = $this->enrichOrganisationPath(
             [
-                'id' => '123'
-            ]
+                'id' => '123',
+            ],
         );
 
         $this->assertEquals(
             123,
             $doc->sp_organisation,
-            'unexpected id'
+            'unexpected id',
         );
     }
 
@@ -168,26 +213,26 @@ class OrganisationDocumentEnricherTest extends TestCase
                         'citygovOrganisation' => [
                             'parents' => [
                                 '12' => [
-                                    'url' => '/12.php'
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
-            ]
+                                    'url' => '/12.php',
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
         );
 
         $this->assertEquals(
             [12, 123],
             $doc->sp_organisation_path,
-            'unexpected path'
+            'unexpected path',
         );
     }
 
     public function testOrgaPathWithException(): void
     {
         $hierarchyLoader = $this->createStub(
-            SiteKitResourceHierarchyLoader::class
+            SiteKitResourceHierarchyLoader::class,
         );
         $resource = TestResourceFactory::create([
             'url' => '/12.php',
@@ -200,11 +245,13 @@ class OrganisationDocumentEnricherTest extends TestCase
             ->method('loadPrimaryPath')
             ->willThrowException(new DocumentEnrichingException(
                 ResourceLocation::of('test'),
-                'test'
+                'test',
             ));
 
         $enricher = new OrganisationDocumentEnricher(
-            $hierarchyLoader
+            new ChannelAttributes(false),
+            $this->solrIndexService,
+            $hierarchyLoader,
         );
         $doc = $this->createMock(IndexSchema2xDocument::class);
 
@@ -212,17 +259,45 @@ class OrganisationDocumentEnricherTest extends TestCase
         $enricher->enrichOrganisationPath($resource, $doc);
     }
 
+
+    /**
+     * @throws Exception
+     */
+    public function testAddAlternativeDocument(): void
+    {
+        $this->solrIndexUpdater->expects(new InvokedCount(2))
+            ->method('addDocument');
+        $this->solrIndexUpdater->expects($this->once())
+            ->method('update');
+
+        $this->enrichDocument([
+            'objectType' => 'citygovOrganisation',
+            'metadata' => [
+                'citygovOrganisation' => [
+                    'name' => 'Name of orgnization',
+                    'alternativeNameList' => [
+                        'Alternative name',
+                        'Second name',
+                    ],
+                ],
+            ],
+        ]);
+        $this->testCleanup();
+    }
+
     /**
      * @throws Exception
      */
     private function enrichDocument(
-        array $data
+        array $data,
     ): IndexSchema2xDocument {
         $hierarchyLoader = $this->createStub(
-            SiteKitResourceHierarchyLoader::class
+            SiteKitResourceHierarchyLoader::class,
         );
         $enricher = new OrganisationDocumentEnricher(
-            $hierarchyLoader
+            new ChannelAttributes(true),
+            $this->solrIndexService,
+            $hierarchyLoader,
         );
         $doc = $this->createMock(IndexSchema2xDocument::class);
 
@@ -235,10 +310,10 @@ class OrganisationDocumentEnricherTest extends TestCase
      * @throws Exception
      */
     private function enrichOrganisationPath(
-        array $data
+        array $data,
     ): IndexSchema2xDocument {
         $hierarchyLoader = $this->createStub(
-            SiteKitResourceHierarchyLoader::class
+            SiteKitResourceHierarchyLoader::class,
         );
         $resource12 = TestResourceFactory::create(array_merge([
             'url' => '/12.php',
@@ -258,10 +333,12 @@ class OrganisationDocumentEnricherTest extends TestCase
             ->willReturn([$resource12, $resource123]);
 
         $enricher = new OrganisationDocumentEnricher(
-            $hierarchyLoader
+            new ChannelAttributes(false),
+            $this->solrIndexService,
+            $hierarchyLoader,
         );
         $doc = $this->createMock(IndexSchema2xDocument::class);
-
-        return $enricher->enrichOrganisationPath($resource123, $doc);
+        $enricher->enrichOrganisationPath($resource123, $doc);
+        return $doc;
     }
 }

@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Atoolo\CityGov\Test\Service\Indexer\Enricher\SiteKitSchema2x;
 
-// phpcs:ignore
-use Atoolo\CityGov\Service\Indexer\Enricher\SiteKitSchema2x\ContactPointDocumentEnricher;
+use Atoolo\CityGov\Service\Indexer\Enricher\{
+    SiteKitSchema2x\ContactPointDocumentEnricher
+};
 use Atoolo\CityGov\Test\TestResourceFactory;
-use Atoolo\Resource\Resource;
 use Atoolo\Search\Service\Indexer\IndexSchema2xDocument;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\Exception;
@@ -16,6 +16,12 @@ use PHPUnit\Framework\TestCase;
 #[CoversClass(ContactPointDocumentEnricher::class)]
 class ContactPointDocumentEnricherTest extends TestCase
 {
+    public function testCleanup(): void
+    {
+        $this->expectNotToPerformAssertions();
+        $enricher = new ContactPointDocumentEnricher();
+        $enricher->cleanup();
+    }
     /**
      * @throws Exception
      */
@@ -31,7 +37,7 @@ class ContactPointDocumentEnricherTest extends TestCase
         $this->assertEquals(
             [],
             $doc->getFields(),
-            'document should be empty'
+            'document should be empty',
         );
     }
 
@@ -48,24 +54,24 @@ class ContactPointDocumentEnricherTest extends TestCase
                         'phoneList' => [
                             [
                                 'phone' => [
-                                    'nationalNumber' => '123'
-                                ]
+                                    'nationalNumber' => '123',
+                                ],
                             ],
                             [
                                 'phone' => [
-                                    'nationalNumber' => '456'
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
-            ]
+                                    'nationalNumber' => '456',
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
         ]);
 
         $this->assertEquals(
             ['123', '456'],
             $doc->sp_citygov_phone,
-            'unexpected phones'
+            'unexpected phones',
         );
     }
 
@@ -81,21 +87,21 @@ class ContactPointDocumentEnricherTest extends TestCase
                     'contactData' => [
                         'emailList' => [
                             [
-                                'email' => 'a@b.de'
+                                'email' => 'a@b.de',
                             ],
                             [
-                                'email' => 'c@d.de'
-                            ]
-                        ]
-                    ]
-                ]
-            ]
+                                'email' => 'c@d.de',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
         ]);
 
         $this->assertEquals(
             ['a@b.de', 'c@d.de'],
             $doc->sp_citygov_email,
-            'unexpected emails'
+            'unexpected emails',
         );
     }
 
@@ -111,16 +117,16 @@ class ContactPointDocumentEnricherTest extends TestCase
                     'addressData' => [
                         'buildingName' => 'Building',
                         'street' => 'Street',
-                        'housenumber' => '10'
-                    ]
-                ]
-            ]
+                        'housenumber' => '10',
+                    ],
+                ],
+            ],
         ]);
 
         $this->assertEquals(
             'Building Street 10',
             $doc->sp_citygov_address,
-            'unexpected address'
+            'unexpected address',
         );
     }
 
@@ -128,7 +134,7 @@ class ContactPointDocumentEnricherTest extends TestCase
      * @throws Exception
      */
     private function enrichDocument(
-        array $data
+        array $data,
     ): IndexSchema2xDocument {
         $enricher = new ContactPointDocumentEnricher();
         $doc = $this->createMock(IndexSchema2xDocument::class);

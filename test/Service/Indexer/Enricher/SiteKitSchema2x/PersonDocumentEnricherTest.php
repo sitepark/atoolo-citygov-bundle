@@ -4,24 +4,45 @@ declare(strict_types=1);
 
 namespace Atoolo\CityGov\Test\Service\Indexer\Enricher\SiteKitSchema2x;
 
-// phpcs:ignore
-use Atoolo\CityGov\Service\Indexer\Enricher\SiteKitSchema2x\OrganisationDocumentEnricher;
-// phpcs:ignore
-use Atoolo\CityGov\Service\Indexer\Enricher\SiteKitSchema2x\PersonDocumentEnricher;
+use Atoolo\CityGov\Service\Indexer\Enricher\{
+    SiteKitSchema2x\OrganisationDocumentEnricher,
+    SiteKitSchema2x\PersonDocumentEnricher
+};
 use Atoolo\CityGov\Test\TestResourceFactory;
 use Atoolo\Resource\Exception\InvalidResourceException;
 use Atoolo\Resource\Exception\ResourceNotFoundException;
-use Atoolo\Resource\Resource;
 use Atoolo\Resource\ResourceLoader;
 use Atoolo\Search\Exception\DocumentEnrichingException;
 use Atoolo\Search\Service\Indexer\IndexSchema2xDocument;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
 use Solarium\Core\Query\DocumentInterface;
 
 #[CoversClass(PersonDocumentEnricher::class)]
 class PersonDocumentEnricherTest extends TestCase
 {
+    /**
+     * @throws Exception
+     */
+    public function testCleanup(): void
+    {
+        $resourceLoader = $this->createMock(
+            ResourceLoader::class,
+        );
+        $organisationEnricher = $this->createStub(
+            OrganisationDocumentEnricher::class,
+        );
+        $resourceLoader->expects($this->once())
+            ->method('cleanup');
+
+        $enricher = new PersonDocumentEnricher(
+            $resourceLoader,
+            $organisationEnricher,
+        );
+        $enricher->cleanup();
+    }
+
     public function testObjectType(): void
     {
         $doc = $this->enrichDocument([
@@ -31,7 +52,7 @@ class PersonDocumentEnricherTest extends TestCase
         $this->assertEquals(
             [],
             $doc->getFields(),
-            'document should be empty'
+            'document should be empty',
         );
     }
 
@@ -41,15 +62,15 @@ class PersonDocumentEnricherTest extends TestCase
             'objectType' => 'citygovPerson',
             'metadata' => [
                 'citygovPerson' => [
-                    'firstname' => 'Peter'
-                ]
-            ]
+                    'firstname' => 'Peter',
+                ],
+            ],
         ]);
 
         $this->assertEquals(
             'Peter',
             $doc->sp_citygov_firstname,
-            'unexpected firstname'
+            'unexpected firstname',
         );
     }
 
@@ -59,15 +80,15 @@ class PersonDocumentEnricherTest extends TestCase
             'objectType' => 'citygovPerson',
             'metadata' => [
                 'citygovPerson' => [
-                    'lastname' => 'Pan'
-                ]
-            ]
+                    'lastname' => 'Pan',
+                ],
+            ],
         ]);
 
         $this->assertEquals(
             'Pan',
             $doc->sp_citygov_lastname,
-            'unexpected lastname'
+            'unexpected lastname',
         );
     }
 
@@ -78,15 +99,15 @@ class PersonDocumentEnricherTest extends TestCase
             'metadata' => [
                 'citygovPerson' => [
                     'firstname' => 'Peter',
-                    'lastname' => 'Pan'
-                ]
-            ]
+                    'lastname' => 'Pan',
+                ],
+            ],
         ]);
 
         $this->assertEquals(
             'PanaaaPeter',
             $doc->sp_sortvalue,
-            'unexpected sortvalue'
+            'unexpected sortvalue',
         );
     }
 
@@ -96,15 +117,15 @@ class PersonDocumentEnricherTest extends TestCase
             'objectType' => 'citygovPerson',
             'metadata' => [
                 'citygovPerson' => [
-                    'lastname' => 'Pan'
-                ]
-            ]
+                    'lastname' => 'Pan',
+                ],
+            ],
         ]);
 
         $this->assertEquals(
             'P',
             $doc->sp_citygov_startletter,
-            'unexpected startletter'
+            'unexpected startletter',
         );
     }
 
@@ -118,23 +139,23 @@ class PersonDocumentEnricherTest extends TestCase
                         'items' => [
                             [
                                 'organisation' => [
-                                    'url' => '/orga.php'
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
-            ]
+                                    'url' => '/orga.php',
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
         ]);
 
         $this->assertEquals(
             [
                 'orgaName',
                 'Synonym1',
-                'Synonym2'
+                'Synonym2',
             ],
             $doc->sp_citygov_organisation,
-            'unexpected organisation'
+            'unexpected organisation',
         );
     }
 
@@ -148,20 +169,20 @@ class PersonDocumentEnricherTest extends TestCase
                         'items' => [
                             [
                                 'organisation' => [
-                                    'urlx' => '/orga.php'
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
-            ]
+                                    'urlx' => '/orga.php',
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
         ]);
 
         $this->assertEquals(
             [
             ],
             $doc->sp_citygov_organisation,
-            'unexpected organisation'
+            'unexpected organisation',
         );
     }
 
@@ -176,13 +197,13 @@ class PersonDocumentEnricherTest extends TestCase
                         'items' => [
                             [
                                 'organisation' => [
-                                    'url' => 'throwException'
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
-            ]
+                                    'url' => 'throwException',
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
         ]);
     }
 
@@ -196,21 +217,21 @@ class PersonDocumentEnricherTest extends TestCase
                         'items' => [
                             [
                                 'organisation' => [
-                                    'url' => '/orga.php'
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
-            ]
+                                    'url' => '/orga.php',
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
         ]);
 
         $this->assertEquals(
             [
-                'token A'
+                'token A',
             ],
             $doc->sp_citygov_organisationtoken,
-            'unexpected organisation'
+            'unexpected organisation',
         );
     }
 
@@ -225,19 +246,19 @@ class PersonDocumentEnricherTest extends TestCase
                             [
                                 'primary' => true,
                                 'organisation' => [
-                                    'url' => '/orga.php'
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
-            ]
+                                    'url' => '/orga.php',
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
         ]);
 
         $this->assertEquals(
             '12',
             $doc->sp_organisation,
-            'unexpected organisation'
+            'unexpected organisation',
         );
     }
 
@@ -251,23 +272,23 @@ class PersonDocumentEnricherTest extends TestCase
                         'items' => [
                             [
                                 'product' => [
-                                    'url' => '/product.php'
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
-            ]
+                                    'url' => '/product.php',
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
         ]);
 
         $this->assertEquals(
             [
                 'productName',
                 'Synonym3',
-                'Synonym4'
+                'Synonym4',
             ],
             $doc->sp_citygov_product,
-            'unexpected organisation'
+            'unexpected organisation',
         );
     }
 
@@ -281,19 +302,19 @@ class PersonDocumentEnricherTest extends TestCase
                         'items' => [
                             [
                                 'product' => [
-                                    'urlx' => '/product.php'
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
-            ]
+                                    'urlx' => '/product.php',
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
         ]);
 
         $this->assertEquals(
             [],
             $doc->sp_citygov_product,
-            'unexpected organisation'
+            'unexpected organisation',
         );
     }
 
@@ -308,13 +329,13 @@ class PersonDocumentEnricherTest extends TestCase
                         'items' => [
                             [
                                 'product' => [
-                                    'url' => 'throwException'
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
-            ]
+                                    'url' => 'throwException',
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
         ]);
     }
 
@@ -326,16 +347,16 @@ class PersonDocumentEnricherTest extends TestCase
                 'citygovPerson' => [
                     'function' => [
                         'name' => 'FunctionName',
-                        'appendix' => 'FunctionAppendix'
-                    ]
-                ]
-            ]
+                        'appendix' => 'FunctionAppendix',
+                    ],
+                ],
+            ],
         ]);
 
         $this->assertEquals(
             'FunctionName FunctionAppendix',
             $doc->sp_citygov_function,
-            'unexpected function'
+            'unexpected function',
         );
     }
 
@@ -347,25 +368,25 @@ class PersonDocumentEnricherTest extends TestCase
                 'citygovPerson' => [
                     'function' => [
                         'name' => 'FunctionName',
-                        'appendix' => 'FunctionAppendix'
-                    ]
-                ]
-            ]
+                        'appendix' => 'FunctionAppendix',
+                    ],
+                ],
+            ],
         ]);
 
         $this->assertEquals(
             'FunctionName FunctionAppendix',
             $doc->content,
-            'unexpected function'
+            'unexpected function',
         );
     }
 
     private function enrichDocument(
-        array $data
+        array $data,
     ): DocumentInterface {
 
         $resourceLoader = $this->createStub(
-            ResourceLoader::class
+            ResourceLoader::class,
         );
         $orga = TestResourceFactory::create([
             'url' => '/orga.php',
@@ -376,9 +397,9 @@ class PersonDocumentEnricherTest extends TestCase
                 'citygovOrganisation' => [
                     'name' => 'orgaName',
                     'token' => 'token.A',
-                    'synonymList' => ['Synonym1', 'Synonym2']
-                ]
-            ]
+                    'synonymList' => ['Synonym1', 'Synonym2'],
+                ],
+            ],
         ]);
         $product = TestResourceFactory::create([
             'url' => '/product.php',
@@ -388,9 +409,9 @@ class PersonDocumentEnricherTest extends TestCase
             'metadata' => [
                 'citygovProduct' => [
                     'name' => 'productName',
-                    'synonymList' => ['Synonym3', 'Synonym4']
-                ]
-            ]
+                    'synonymList' => ['Synonym3', 'Synonym4'],
+                ],
+            ],
         ]);
         $resourceLoader->expects($this->any())
             ->method('load')
@@ -398,7 +419,7 @@ class PersonDocumentEnricherTest extends TestCase
                 if ($location->location === 'throwException') {
                     throw new InvalidResourceException(
                         $location,
-                        'throw for test'
+                        'throw for test',
                     );
                 }
                 if ($location->location === '/orga.php') {
@@ -410,7 +431,7 @@ class PersonDocumentEnricherTest extends TestCase
                 throw new ResourceNotFoundException($location);
             });
         $organisationEnricher = $this->createStub(
-            OrganisationDocumentEnricher::class
+            OrganisationDocumentEnricher::class,
         );
         $organisationEnricher->expects($this->any())
             ->method('enrichOrganisationPath')
@@ -420,7 +441,7 @@ class PersonDocumentEnricherTest extends TestCase
             });
         $enricher = new PersonDocumentEnricher(
             $resourceLoader,
-            $organisationEnricher
+            $organisationEnricher,
         );
         $doc = $this->createMock(IndexSchema2xDocument::class);
 

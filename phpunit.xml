@@ -12,7 +12,7 @@
 		displayDetailsOnTestsThatTriggerWarnings="true">
 
 
-<coverage>
+	<coverage>
 		<report>
 			<clover outputFile="var/log/clover/clover.xml"/>
 			<html outputDirectory="var/log/clover"/>
