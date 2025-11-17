@@ -37,6 +37,9 @@ services:
   # GraphQL
   atoolo_citygov.graphql.factory.online_service_feature:
     class: Atoolo\CityGov\Service\GraphQL\Factory\OnlineServiceFeatureFactory
+    arguments:
+      - '@atoolo_resource.navigation_hierarchy_loader'
+      - '@atoolo_graphql_search.factory.link_factory'
     tags:
       - { name: 'atoolo_graphql_search.teaser_feature_factory' }
 
