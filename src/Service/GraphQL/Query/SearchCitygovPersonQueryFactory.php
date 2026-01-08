@@ -11,12 +11,11 @@ use Atoolo\Search\Dto\Search\Query\SearchQuery;
 
 class SearchCitygovPersonQueryFactory
 {
-    private readonly CitygovPersonFilterFactory $citygovPersonFilterFactory;
+    //private readonly CitygovPersonFilterFactory $citygovPersonFilterFactory;
 
-    public function __construct()
-    {
-        $this->citygovPersonFilterFactory = new CitygovPersonFilterFactory();
-    }
+    public function __construct(
+        private readonly CitygovPersonFilterFactory $citygovPersonFilterFactory,
+    ) {}
 
     public function create(SearchInput $input): SearchQuery
     {

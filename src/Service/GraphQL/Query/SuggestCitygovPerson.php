@@ -11,8 +11,6 @@ use Atoolo\Search\Dto\Search\Result\SuggestResult;
 #[GQL\Provider]
 class SuggestCitygovPerson
 {
-    private readonly SuggestCitygovPersonQueryFactory $queryFactory;
-
     public function __construct(
         private readonly \Atoolo\Search\Suggest $firstnameSuggest,
         private readonly \Atoolo\Search\Suggest $lastnameSuggest,
@@ -21,9 +19,8 @@ class SuggestCitygovPerson
         private readonly \Atoolo\Search\Suggest $organisationSuggest,
         private readonly \Atoolo\Search\Suggest $phonenumberSuggest,
         private readonly \Atoolo\Search\Suggest $addressSuggest,
-    ) {
-        $this->queryFactory = new SuggestCitygovPersonQueryFactory();
-    }
+        private readonly SuggestCitygovPersonQueryFactory $queryFactory,
+    ) {}
 
     #[GQL\Query(name: 'suggestCitygovPersonFirstname', type: 'SuggestResult!')]
     public function suggestCitygovPersonFirstname(SuggestInput $input): SuggestResult

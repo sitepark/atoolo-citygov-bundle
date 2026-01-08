@@ -1,11 +1,14 @@
 <?php
 
-declare(strict_types=1);
-
 namespace Atoolo\CityGov\Test\Service\GraphQL\Query;
 
 use Atoolo\CityGov\Service\GraphQL\Input\SearchCitygovPersonInput;
+use Atoolo\CityGov\Service\GraphQL\Input\SearchCitygovPersonInput as SearchInput;
 use Atoolo\CityGov\Service\GraphQL\Query\SearchCitygovPerson;
+use Atoolo\CityGov\Service\GraphQL\Query\SearchCitygovPersonQueryFactory;
+use Atoolo\Search\Dto\Search\Query\SearchQuery;
+use Atoolo\Search\Dto\Search\Result\SearchResult;
+use Atoolo\Search\Search;
 use Overblog\GraphQLBundle\Error\UserError;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -14,30 +17,45 @@ use PHPUnit\Framework\TestCase;
 #[CoversClass(SearchCitygovPerson::class)]
 class SearchCitygovPersonTest extends TestCase
 {
-    private \Atoolo\Search\Search&MockObject $searcher;
+    private Search&MockObject $search;
+    private SearchCitygovPersonQueryFactory&MockObject $queryFactory;
+    private SearchCitygovPerson $searchCitygovPerson;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
-        $this->searcher = $this->createMock(\Atoolo\Search\Search::class);
+        $this->search = $this->createMock(Search::class);
+        $this->queryFactory = $this->createMock(SearchCitygovPersonQueryFactory::class);
+        $this->searchCitygovPerson = new SearchCitygovPerson(
+            $this->search,
+            $this->queryFactory,
+        );
     }
 
-    public function testIfSearcherIsInvoked(): void
+    public function testSearchReturnsResult(): void
     {
-        $search = new SearchCitygovPerson($this->searcher);
-        $this->searcher
-            ->expects($this->once())
-            ->method('search');
-        $search->search(new SearchCitygovPersonInput());
+        $input = $this->createMock(SearchInput::class);
+        $query = $this->createMock(SearchQuery::class);
+        $result = $this->createMock(SearchResult::class);
+        $this->queryFactory->expects($this->once())
+            ->method('create')
+            ->with($input)
+            ->willReturn($query);
+        $this->search->expects($this->once())
+            ->method('search')
+            ->with($query)
+            ->willReturn($result);
+
+        $actualResult = $this->searchCitygovPerson->search($input);
+        $this->assertSame($result, $actualResult, 'Should return the search result');
     }
 
     public function testUserError(): void
     {
-        $search = new SearchCitygovPerson($this->searcher);
-        $this->searcher
+        $this->search
             ->expects($this->once())
             ->method('search')
             ->willThrowException(new \Exception('Some user error'));
         $this->expectException(UserError::class);
-        $search->search(new SearchCitygovPersonInput());
+        $this->searchCitygovPerson->search(new SearchCitygovPersonInput());
     }
 }

@@ -11,12 +11,9 @@ use Atoolo\Search\Dto\Search\Query\SuggestQuery;
 
 class SuggestCitygovPersonQueryFactory
 {
-    private readonly CitygovPersonFilterFactory $citygovPersonFilterFactory;
-
-    public function __construct()
-    {
-        $this->citygovPersonFilterFactory = new CitygovPersonFilterFactory();
-    }
+    public function __construct(
+        private readonly CitygovPersonFilterFactory $citygovPersonFilterFactory,
+    ) {}
 
     public function createForFirstname(SuggestInput $input): SuggestQuery
     {

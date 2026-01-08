@@ -6,6 +6,7 @@ namespace Atoolo\CityGov\Test\Service\GraphQL\Query;
 
 use Atoolo\CityGov\Service\GraphQL\Input\CitygovPerson;
 use Atoolo\CityGov\Service\GraphQL\Input\SuggestCitygovPersonInput;
+use Atoolo\CityGov\Service\GraphQL\Query\CitygovPersonFilterFactory;
 use Atoolo\CityGov\Service\GraphQL\Query\SuggestCitygovPersonQueryFactory;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
@@ -17,7 +18,9 @@ class SuggestCitygovPersonQueryFactoryTest extends TestCase
 
     public function setUp(): void
     {
-        $this->queryFactory = new SuggestCitygovPersonQueryFactory();
+        /** @var CitygovPersonFilterFactory $facrory */
+        $factory = $this->createMock(CitygovPersonFilterFactory::class);
+        $this->queryFactory = new SuggestCitygovPersonQueryFactory($factory);
     }
 
     public function testCreateForFirstname(): void

@@ -12,13 +12,12 @@ use Overblog\GraphQLBundle\Error\UserError;
 #[GQL\Provider]
 class SearchCitygovPerson
 {
-    private readonly SearchCitygovPersonQueryFactory $queryFactory;
+    //private readonly SearchCitygovPersonQueryFactory $queryFactory;
 
     public function __construct(
         private readonly \Atoolo\Search\Search $search,
-    ) {
-        $this->queryFactory = new SearchCitygovPersonQueryFactory();
-    }
+        private readonly SearchCitygovPersonQueryFactory $queryFactory,
+    ) {}
 
     #[GQL\Query(name: 'searchCitygovPerson', type: 'SearchResult!')]
     public function search(SearchInput $input): SearchResult

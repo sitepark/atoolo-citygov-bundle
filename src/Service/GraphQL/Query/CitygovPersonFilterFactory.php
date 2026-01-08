@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Atoolo\CityGov\Service\GraphQL\Query;
 
+use Atoolo\CityGov\Service\GraphQL\Factory\CompetenceFilterFactory;
 use Atoolo\CityGov\Service\GraphQL\Input\CitygovPerson;
 use Atoolo\CityGov\Service\GraphQL\Input\CitygovPersonCompetence;
 use Atoolo\CityGov\Service\GraphQL\Input\CitygovPersonField;
@@ -16,6 +17,10 @@ use Atoolo\Search\Dto\Search\Query\Filter\QueryFilter;
 
 class CitygovPersonFilterFactory
 {
+    public function __construct(
+        private readonly CompetenceFilterFactory $competenceFilterFactory,
+    ) {}
+
     /**
      * @return Filter[]
      */
@@ -112,6 +117,13 @@ class CitygovPersonFilterFactory
      */
     protected function getIdRangeFilter(CitygovPersonCompetence $personCompetenceInput): array
     {
-        return [];
+        $personFilterList = $this->competenceFilterFactory->getfilteredPersonIdList($personCompetenceInput);
+        if ($personFilterList === null) {
+            return [];
+        } elseif (empty($personFilterList)) {
+            return [new QueryFilter("sp_id:(0)")];
+        } else {
+            return [new QueryFilter("sp_id:(" . implode(' OR ', $personFilterList) . ")")];
+        }
     }
 }

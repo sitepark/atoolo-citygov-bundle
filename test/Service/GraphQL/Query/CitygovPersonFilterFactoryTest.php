@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Atoolo\CityGov\Test\Service\GraphQL\Query;
 
+use Atoolo\CityGov\Service\GraphQL\Factory\CompetenceFilterFactory;
 use Atoolo\CityGov\Service\GraphQL\Input\CitygovPerson;
 use Atoolo\CityGov\Service\GraphQL\Input\CitygovPersonCompetence;
 use Atoolo\CityGov\Service\GraphQL\Input\SearchCitygovPersonInput;
@@ -22,10 +23,20 @@ use function PHPUnit\Framework\assertEquals;
 class CitygovPersonFilterFactoryTest extends TestCase
 {
     private CitygovPersonFilterFactory $filterFactory;
+    private CitygovPersonFilterFactory $filterFactoryEmptyComponentFilter;
+    private CitygovPersonFilterFactory $filterFactoryFilledComponentFilter;
 
     public function setUp(): void
     {
-        $this->filterFactory = new CitygovPersonFilterFactory();
+        $componentFilterFactory = $this->createMock(CompetenceFilterFactory::class);
+        $componentFilterFactoryEmpty = $this->createMock(CompetenceFilterFactory::class);
+        $componentFilterFactoryEmpty->method('getfilteredPersonIdList')->willReturn([]);
+        $componentFilterFactoryIdList = $this->createMock(CompetenceFilterFactory::class);
+        $componentFilterFactoryIdList->method('getfilteredPersonIdList')->willReturn([815, 518]);
+
+        $this->filterFactory = new CitygovPersonFilterFactory($componentFilterFactory);
+        $this->filterFactoryEmptyComponentFilter = new CitygovPersonFilterFactory($componentFilterFactoryEmpty);
+        $this->filterFactoryFilledComponentFilter = new CitygovPersonFilterFactory($componentFilterFactoryIdList);
     }
 
     public function testCreateForCitygovPersonSearch(): void
@@ -42,6 +53,26 @@ class CitygovPersonFilterFactoryTest extends TestCase
             $this->createSuggestInput(),
         );
         assertEquals($this->createExpectedFilters(), $fitlers);
+    }
+
+    public function testCitygovPersonSearchEmptyCompetence(): void
+    {
+        $fitlers = $this->filterFactoryEmptyComponentFilter->createForCitygovPersonSearch(
+            $this->createSearchInput(),
+        );
+        $expectedFilters = $this->createExpectedFilters();
+        $expectedFilters[] = new QueryFilter('sp_id:(0)');
+        assertEquals($expectedFilters, $fitlers);
+    }
+
+    public function testCitygovPersonSearchRilledCompetence(): void
+    {
+        $fitlers = $this->filterFactoryFilledComponentFilter->createForCitygovPersonSearch(
+            $this->createSearchInput(),
+        );
+        $expectedFilters = $this->createExpectedFilters();
+        $expectedFilters[] = new QueryFilter('sp_id:(815 OR 518)');
+        assertEquals($expectedFilters, $fitlers);
     }
 
     private function createSearchInput(): SearchCitygovPersonInput
