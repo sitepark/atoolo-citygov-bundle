@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Atoolo\CityGov\Service\GraphQL\Query;
 
+use Atoolo\CityGov\Service\GraphQL\Input\CitygovPersonField;
 use Overblog\GraphQLBundle\Annotation as GQL;
 use Atoolo\CityGov\Service\GraphQL\Input\SuggestCitygovPersonInput as SuggestInput;
 use Atoolo\Search\Dto\Search\Result\SuggestResult;
@@ -22,52 +23,31 @@ class SuggestCitygovPerson
         private readonly SuggestCitygovPersonQueryFactory $queryFactory,
     ) {}
 
-    #[GQL\Query(name: 'suggestCitygovPersonFirstname', type: 'SuggestResult!')]
-    public function suggestCitygovPersonFirstname(SuggestInput $input): SuggestResult
+    #[GQL\Query(name: 'suggestCitygovPersonField', type: 'SuggestResult!')]
+    public function suggestCitygovPersonField(CitygovPersonField $field, SuggestInput $input): SuggestResult
     {
-        $query = $this->queryFactory->createForFirstname($input);
-        return $this->firstnameSuggest->suggest($query);
-    }
-
-    #[GQL\Query(name: 'suggestCitygovPersonLastname', type: 'SuggestResult!')]
-    public function suggestCitygovPersonLastname(SuggestInput $input): SuggestResult
-    {
-        $query = $this->queryFactory->createForLastname($input);
-        return $this->lastnameSuggest->suggest($query);
-    }
-
-    #[GQL\Query(name: 'suggestCitygovPersonProduct', type: 'SuggestResult!')]
-    public function suggestCitygovPersonProduct(SuggestInput $input): SuggestResult
-    {
-        $query = $this->queryFactory->createForProduct($input);
-        return $this->productSuggest->suggest($query);
-    }
-
-    #[GQL\Query(name: 'suggestCitygovPersonFunction', type: 'SuggestResult!')]
-    public function suggestCitygovPersonFunction(SuggestInput $input): SuggestResult
-    {
-        $query = $this->queryFactory->createForFunction($input);
-        return $this->functionSuggest->suggest($query);
-    }
-
-    #[GQL\Query(name: 'suggestCitygovPersonOrganisation', type: 'SuggestResult!')]
-    public function suggestCitygovPersonOrganisation(SuggestInput $input): SuggestResult
-    {
-        $query = $this->queryFactory->createForOrganisation($input);
-        return $this->organisationSuggest->suggest($query);
-    }
-
-    #[GQL\Query(name: 'suggestCitygovPersonPhonenumber', type: 'SuggestResult!')]
-    public function suggestCitygovPersonPhonenumber(SuggestInput $input): SuggestResult
-    {
-        $query = $this->queryFactory->createForPhonenumber($input);
-        return $this->phonenumberSuggest->suggest($query);
-    }
-
-    #[GQL\Query(name: 'suggestCitygovPersonAddress', type: 'SuggestResult!')]
-    public function suggestCitygovPersonAddress(SuggestInput $input): SuggestResult
-    {
-        $query = $this->queryFactory->createForAddress($input);
-        return $this->addressSuggest->suggest($query);
+        return match ($field) {
+            CitygovPersonField::FIRSTNAME => $this->firstnameSuggest->suggest(
+                $this->queryFactory->createForFirstname($input),
+            ),
+            CitygovPersonField::LASTNAME => $this->lastnameSuggest->suggest(
+                $this->queryFactory->createForLastname($input),
+            ),
+            CitygovPersonField::PRODUCT => $this->productSuggest->suggest(
+                $this->queryFactory->createForProduct($input),
+            ),
+            CitygovPersonField::FUNCTION => $this->functionSuggest->suggest(
+                $this->queryFactory->createForFunction($input),
+            ),
+            CitygovPersonField::ORGANISATION => $this->organisationSuggest->suggest(
+                $this->queryFactory->createForOrganisation($input),
+            ),
+            CitygovPersonField::PHONENUMBER => $this->phonenumberSuggest->suggest(
+                $this->queryFactory->createForPhonenumber($input),
+            ),
+            CitygovPersonField::ADDRESS => $this->addressSuggest->suggest(
+                $this->queryFactory->createForAddress($input),
+            ),
+        };
     }
 }

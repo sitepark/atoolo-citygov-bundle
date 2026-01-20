@@ -47,44 +47,38 @@ services:
       - '@atoolo_search.field_mapper'
       - '@atoolo_search.query_template_resolver'
 
-  Atoolo\CityGov\Service\GraphQL\Query\SearchCitygovPersonQueryFactory:
-    public: true
-    arguments:
-      - '@atoolo_search.search'
-      - '@atoolo_citygov.graphql.query.search_citygov_person_query_factory'
-
   atoolo_citygov.search.solr_suggest_citygov_person_firstname:
-    class: Atoolo\Search\Service\Search\SolrSearch
+    class: Atoolo\Search\Service\Search\SolrSuggest
     factory: [ '@atoolo_citygov.search.solr_suggest_factory', 'createForSolrField' ]
     arguments: ['sp_citygov_firstname']
   
   atoolo_citygov.search.solr_suggest_citygov_person_lastname:
-    class: Atoolo\Search\Service\Search\SolrSearch
+    class: Atoolo\Search\Service\Search\SolrSuggest
     factory: [ '@atoolo_citygov.search.solr_suggest_factory', 'createForSolrField' ]
     arguments: ['sp_citygov_lastname']
   
   atoolo_citygov.search.solr_suggest_citygov_person_product:
-    class: Atoolo\Search\Service\Search\SolrSearch
+    class: Atoolo\Search\Service\Search\SolrSuggest
     factory: [ '@atoolo_citygov.search.solr_suggest_factory', 'createForSolrField' ]
     arguments: ['sp_citygov_product']
   
   atoolo_citygov.search.solr_suggest_citygov_person_function:
-    class: Atoolo\Search\Service\Search\SolrSearch
+    class: Atoolo\Search\Service\Search\SolrSuggest
     factory: [ '@atoolo_citygov.search.solr_suggest_factory', 'createForSolrField' ]
     arguments: ['sp_citygov_function']
   
   atoolo_citygov.search.solr_suggest_citygov_person_organisation:
-    class: Atoolo\Search\Service\Search\SolrSearch
+    class: Atoolo\Search\Service\Search\SolrSuggest
     factory: [ '@atoolo_citygov.search.solr_suggest_factory', 'createForSolrField' ]
     arguments: ['sp_citygov_organisation']
   
   atoolo_citygov.search.solr_suggest_citygov_person_phonenumber:
-    class: Atoolo\Search\Service\Search\SolrSearch
+    class: Atoolo\Search\Service\Search\SolrSuggest
     factory: [ '@atoolo_citygov.search.solr_suggest_factory', 'createForSolrField' ]
     arguments: ['sp_citygov_phonenumber']
   
   atoolo_citygov.search.solr_suggest_citygov_person_address:
-    class: Atoolo\Search\Service\Search\SolrSearch
+    class: Atoolo\Search\Service\Search\SolrSuggest
     factory: [ '@atoolo_citygov.search.solr_suggest_factory', 'createForSolrField' ]
     arguments: ['sp_citygov_address']
 
@@ -100,7 +94,7 @@ services:
       $organisationSuggest: '@atoolo_citygov.search.solr_suggest_citygov_person_organisation'
       $phonenumberSuggest: '@atoolo_citygov.search.solr_suggest_citygov_person_phonenumber'
       $addressSuggest: '@atoolo_citygov.search.solr_suggest_citygov_person_address'
-      $queryFactory: '@atoolo_citygov.graphql.query.citygov_person_filter_factory'
+      $queryFactory: '@atoolo_citygov.graphql.query.suggest_citygov_person_query_factory'
 
   Atoolo\CityGov\Service\GraphQL\Query\SearchCitygovPerson:
     public: true
@@ -130,6 +124,11 @@ services:
 
   atoolo_citygov.graphql.query.search_citygov_person_query_factory:
       class: Atoolo\CityGov\Service\GraphQL\Query\SearchCitygovPersonQueryFactory
+      arguments:
+          - '@atoolo_citygov.graphql.query.citygov_person_filter_factory'
+  
+  atoolo_citygov.graphql.query.suggest_citygov_person_query_factory:
+      class: Atoolo\CityGov\Service\GraphQL\Query\SuggestCitygovPersonQueryFactory
       arguments:
           - '@atoolo_citygov.graphql.query.citygov_person_filter_factory'
 

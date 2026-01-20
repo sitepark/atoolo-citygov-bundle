@@ -11,8 +11,6 @@ use Atoolo\Search\Dto\Search\Query\SearchQuery;
 
 class SearchCitygovPersonQueryFactory
 {
-    //private readonly CitygovPersonFilterFactory $citygovPersonFilterFactory;
-
     public function __construct(
         private readonly CitygovPersonFilterFactory $citygovPersonFilterFactory,
     ) {}

@@ -42,49 +42,49 @@ class SuggestCitygovPersonTest extends TestCase
     {
         $this->expectSuggestCallFor(CitygovPersonField::FIRSTNAME);
         (new SuggestCitygovPerson(...[...array_values($this->suggesters), $this->queryFactory]))
-            ->suggestCitygovPersonFirstname(new SuggestCitygovPersonInput());
+            ->suggestCitygovPersonField(CitygovPersonField::FIRSTNAME, new SuggestCitygovPersonInput());
     }
 
     public function testSuggestCitygovPersonLastname(): void
     {
         $this->expectSuggestCallFor(CitygovPersonField::LASTNAME);
         (new SuggestCitygovPerson(...[...array_values($this->suggesters), $this->queryFactory]))
-            ->suggestCitygovPersonLastname(new SuggestCitygovPersonInput());
+            ->suggestCitygovPersonField(CitygovPersonField::LASTNAME, new SuggestCitygovPersonInput());
     }
 
     public function testSuggestCitygovPersonProduct(): void
     {
         $this->expectSuggestCallFor(CitygovPersonField::PRODUCT);
         (new SuggestCitygovPerson(...[...array_values($this->suggesters), $this->queryFactory]))
-            ->suggestCitygovPersonProduct(new SuggestCitygovPersonInput());
+            ->suggestCitygovPersonField(CitygovPersonField::PRODUCT, new SuggestCitygovPersonInput());
     }
 
     public function testSuggestCitygovPersonFunction(): void
     {
         $this->expectSuggestCallFor(CitygovPersonField::FUNCTION);
         (new SuggestCitygovPerson(...[...array_values($this->suggesters), $this->queryFactory]))
-            ->suggestCitygovPersonFunction(new SuggestCitygovPersonInput());
+            ->suggestCitygovPersonField(CitygovPersonField::FUNCTION, new SuggestCitygovPersonInput());
     }
 
     public function testSuggestCitygovPersonOrganisation(): void
     {
         $this->expectSuggestCallFor(CitygovPersonField::ORGANISATION);
         (new SuggestCitygovPerson(...[...array_values($this->suggesters), $this->queryFactory]))
-            ->suggestCitygovPersonOrganisation(new SuggestCitygovPersonInput());
+            ->suggestCitygovPersonField(CitygovPersonField::ORGANISATION, new SuggestCitygovPersonInput());
     }
 
     public function testSuggestCitygovPersonPhonenumber(): void
     {
         $this->expectSuggestCallFor(CitygovPersonField::PHONENUMBER);
         (new SuggestCitygovPerson(...[...array_values($this->suggesters), $this->queryFactory]))
-            ->suggestCitygovPersonPhonenumber(new SuggestCitygovPersonInput());
+            ->suggestCitygovPersonField(CitygovPersonField::PHONENUMBER, new SuggestCitygovPersonInput());
     }
 
     public function testSuggestCitygovPersonAddress(): void
     {
         $this->expectSuggestCallFor(CitygovPersonField::ADDRESS);
         (new SuggestCitygovPerson(...[...array_values($this->suggesters), $this->queryFactory]))
-            ->suggestCitygovPersonAddress(new SuggestCitygovPersonInput());
+            ->suggestCitygovPersonField(CitygovPersonField::ADDRESS, new SuggestCitygovPersonInput());
     }
 
     private function expectSuggestCallFor(CitygovPersonField $forField): void
