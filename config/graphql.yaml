@@ -9,6 +9,12 @@ overblog_graphql:
       - type: attribute
         dir: "%atoolo_citygov.src_dir%/Service/GraphQL/Types"
         suffix: ~
+      - type: attribute
+        dir: "%atoolo_citygov.src_dir%/Service/GraphQL/Query"
+        suffix: ~
+      - type: attribute
+        dir: "%atoolo_citygov.src_dir%/Service/GraphQL/Input"
+        suffix: ~
       - types: [yaml]
         dir: "%atoolo_citygov.config_dir%/graphql/types"
         suffix: ~

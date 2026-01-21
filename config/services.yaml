@@ -1,5 +1,8 @@
-services:
+parameters:
+    atoolo_citygov.graphql.factory.competence_filter_factory.database.path: '/WEB-IES/citygov/STORAGE/databases'
+    atoolo_citygov.graphql.factory.competence_filter_factory.database.name: 'competence-range.db'
 
+services:
   atoolo_citygov.citygov_organisation_hierarchy_loader:
     class: Atoolo\Resource\Loader\SiteKitResourceHierarchyLoader
     arguments:
@@ -33,8 +36,72 @@ services:
   Atoolo\CityGov\Service\Indexer\Enricher\SiteKitSchema2x\ContactPointDocumentEnricher:
     tags:
       - { name: 'atoolo_search.indexer.document_enricher.schema2x', priority: 9 }
+  
+  # suggest
+
+  atoolo_citygov.search.solr_suggest_factory:
+    class: Atoolo\CityGov\Service\Search\SolrSuggestFactory
+    arguments:
+      - '@atoolo_search.index_name'
+      - '@atoolo_search.solarium_client_factory'
+      - '@atoolo_search.field_mapper'
+      - '@atoolo_search.query_template_resolver'
+
+  atoolo_citygov.search.solr_suggest_citygov_person_firstname:
+    class: Atoolo\Search\Service\Search\SolrSuggest
+    factory: [ '@atoolo_citygov.search.solr_suggest_factory', 'createForSolrField' ]
+    arguments: ['sp_citygov_firstname']
+  
+  atoolo_citygov.search.solr_suggest_citygov_person_lastname:
+    class: Atoolo\Search\Service\Search\SolrSuggest
+    factory: [ '@atoolo_citygov.search.solr_suggest_factory', 'createForSolrField' ]
+    arguments: ['sp_citygov_lastname']
+  
+  atoolo_citygov.search.solr_suggest_citygov_person_product:
+    class: Atoolo\Search\Service\Search\SolrSuggest
+    factory: [ '@atoolo_citygov.search.solr_suggest_factory', 'createForSolrField' ]
+    arguments: ['sp_citygov_product']
+  
+  atoolo_citygov.search.solr_suggest_citygov_person_function:
+    class: Atoolo\Search\Service\Search\SolrSuggest
+    factory: [ '@atoolo_citygov.search.solr_suggest_factory', 'createForSolrField' ]
+    arguments: ['sp_citygov_function']
+  
+  atoolo_citygov.search.solr_suggest_citygov_person_organisation:
+    class: Atoolo\Search\Service\Search\SolrSuggest
+    factory: [ '@atoolo_citygov.search.solr_suggest_factory', 'createForSolrField' ]
+    arguments: ['sp_citygov_organisation']
+  
+  atoolo_citygov.search.solr_suggest_citygov_person_phonenumber:
+    class: Atoolo\Search\Service\Search\SolrSuggest
+    factory: [ '@atoolo_citygov.search.solr_suggest_factory', 'createForSolrField' ]
+    arguments: ['sp_citygov_phonenumber']
+  
+  atoolo_citygov.search.solr_suggest_citygov_person_address:
+    class: Atoolo\Search\Service\Search\SolrSuggest
+    factory: [ '@atoolo_citygov.search.solr_suggest_factory', 'createForSolrField' ]
+    arguments: ['sp_citygov_address']
 
   # GraphQL
+
+  Atoolo\CityGov\Service\GraphQL\Query\SuggestCitygovPerson:
+    public: true
+    arguments:
+      $firstnameSuggest: '@atoolo_citygov.search.solr_suggest_citygov_person_firstname'
+      $lastnameSuggest: '@atoolo_citygov.search.solr_suggest_citygov_person_lastname'
+      $productSuggest: '@atoolo_citygov.search.solr_suggest_citygov_person_product'
+      $functionSuggest: '@atoolo_citygov.search.solr_suggest_citygov_person_function'
+      $organisationSuggest: '@atoolo_citygov.search.solr_suggest_citygov_person_organisation'
+      $phonenumberSuggest: '@atoolo_citygov.search.solr_suggest_citygov_person_phonenumber'
+      $addressSuggest: '@atoolo_citygov.search.solr_suggest_citygov_person_address'
+      $queryFactory: '@atoolo_citygov.graphql.query.suggest_citygov_person_query_factory'
+
+  Atoolo\CityGov\Service\GraphQL\Query\SearchCitygovPerson:
+    public: true
+    arguments:
+      - '@atoolo_search.search'
+      - '@atoolo_citygov.graphql.query.search_citygov_person_query_factory'
+
   atoolo_citygov.graphql.factory.online_service_feature:
     class: Atoolo\CityGov\Service\GraphQL\Factory\OnlineServiceFeatureFactory
     arguments:
@@ -42,6 +109,28 @@ services:
       - '@atoolo_graphql_search.factory.link_factory'
     tags:
       - { name: 'atoolo_graphql_search.teaser_feature_factory' }
+
+  atoolo_citygov.graphql.factory.competence_filter_factory:
+      class: Atoolo\CityGov\Service\GraphQL\Factory\CompetenceFilterFactory
+      arguments:
+          - '%atoolo_resource.resource_root%'
+          - '%atoolo_citygov.graphql.factory.competence_filter_factory.database.path%'
+          - '%atoolo_citygov.graphql.factory.competence_filter_factory.database.name%'
+
+  atoolo_citygov.graphql.query.citygov_person_filter_factory:
+      class: Atoolo\CityGov\Service\GraphQL\Query\CitygovPersonFilterFactory
+      arguments:
+          - '@atoolo_citygov.graphql.factory.competence_filter_factory'
+
+  atoolo_citygov.graphql.query.search_citygov_person_query_factory:
+      class: Atoolo\CityGov\Service\GraphQL\Query\SearchCitygovPersonQueryFactory
+      arguments:
+          - '@atoolo_citygov.graphql.query.citygov_person_filter_factory'
+  
+  atoolo_citygov.graphql.query.suggest_citygov_person_query_factory:
+      class: Atoolo\CityGov\Service\GraphQL\Query\SuggestCitygovPersonQueryFactory
+      arguments:
+          - '@atoolo_citygov.graphql.query.citygov_person_filter_factory'
 
   atoolo_citygov.resource_channel_attributes_factory:
     class: Atoolo\CityGov\Factory\ChannelAttributesFactory
