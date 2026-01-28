@@ -75,7 +75,7 @@ services:
   atoolo_citygov.search.solr_suggest_citygov_person_phonenumber:
     class: Atoolo\Search\Service\Search\SolrSuggest
     factory: [ '@atoolo_citygov.search.solr_suggest_factory', 'createForSolrField' ]
-    arguments: ['sp_citygov_phonenumber']
+    arguments: ['sp_citygov_phone']
   
   atoolo_citygov.search.solr_suggest_citygov_person_address:
     class: Atoolo\Search\Service\Search\SolrSuggest
