@@ -9,6 +9,10 @@ on:
     - 'main'
   workflow_dispatch:
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   verify:
     uses: sitepark/github-project-workflow/.github/workflows/composer-verify.yml@release/1.x
