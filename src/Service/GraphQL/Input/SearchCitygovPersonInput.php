@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Atoolo\CityGov\Service\GraphQL\Input;
 
+use Atoolo\GraphQL\Search\Input\InputSortCriteria;
 use Overblog\GraphQLBundle\Annotation as GQL;
 
 /**
@@ -26,4 +27,10 @@ class SearchCitygovPersonInput
 
     #[GQL\Field(type: "String")]
     public ?string $lang = null;
+
+    /**
+     * @var ?array<InputSortCriteria>
+     */
+    #[GQL\Field(type: "[InputSortCriteria!]")]
+    public ?array $sort = null;
 }

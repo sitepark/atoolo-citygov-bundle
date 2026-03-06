@@ -8,6 +8,11 @@ use Atoolo\CityGov\Service\GraphQL\Input\CitygovPerson;
 use Atoolo\CityGov\Service\GraphQL\Input\SearchCitygovPersonInput;
 use Atoolo\CityGov\Service\GraphQL\Query\CitygovPersonFilterFactory;
 use Atoolo\CityGov\Service\GraphQL\Query\SearchCitygovPersonQueryFactory;
+use Atoolo\GraphQL\Search\Input\InputSortCriteria;
+use Atoolo\GraphQL\Search\Types\SortDirection;
+use Atoolo\Search\Dto\Search\Query\Sort\Natural;
+use Atoolo\Search\Dto\Search\Query\Sort\Score;
+use Atoolo\Search\Dto\Search\Query\Sort\Direction;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
@@ -40,6 +45,15 @@ class SearchCitygovPersonQueryFactoryTest extends TestCase
         $this->assertEquals('en', $query->lang->code);
     }
 
+    public function testCreateWithSort(): void
+    {
+        $query = $this->queryFactory->create($this->createInput());
+        $this->assertInstanceOf(Natural::class, $query->sort[0]);
+        $this->assertEquals(Direction::DESC, $query->sort[0]->direction);
+        $this->assertInstanceOf(Score::class, $query->sort[1]);
+        $this->assertEquals(Direction::ASC, $query->sort[1]->direction);
+    }
+
     private function createInput(): SearchCitygovPersonInput
     {
         $input = new SearchCitygovPersonInput();
@@ -54,6 +68,11 @@ class SearchCitygovPersonQueryFactoryTest extends TestCase
         $input->lang = 'en';
         $input->offset = 15;
         $input->limit = 5;
+        $sortA = new InputSortCriteria();
+        $sortA->natural = SortDirection::DESC;
+        $sortB = new InputSortCriteria();
+        $sortB->score = SortDirection::ASC;
+        $input->sort = [$sortA, $sortB];
         return $input;
     }
 }
