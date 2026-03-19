@@ -7,9 +7,9 @@ namespace Atoolo\CityGov\Test\Service\GraphQL\Factory;
 use Atoolo\CityGov\Service\GraphQL\Factory\OnlineServiceFeatureFactory;
 use Atoolo\CityGov\Service\GraphQL\Types\OnlineService;
 use Atoolo\CityGov\Service\GraphQL\Types\OnlineServiceFeature;
-use Atoolo\CityGov\Test\TestResourceFactory;
 use Atoolo\GraphQL\Search\Factory\LinkFactory;
 use Atoolo\GraphQL\Search\Types\Link;
+use Atoolo\Resource\Resource;
 use Atoolo\Resource\ResourceLoader;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -41,10 +41,10 @@ class OnlineServiceFeatureFactoryTest extends TestCase
 
     public function testCreate()
     {
-        $onlineServiceResource = TestResourceFactory::create([]);
+        $onlineServiceResource = Resource::create([]);
         $onlineServiceResourceUrl =  '/path/to/online/service';
         $onlineServiceResourceLink = new Link($onlineServiceResourceUrl);
-        $resource = TestResourceFactory::create([
+        $resource = Resource::create([
             'metadata' => [
                 'citygovProduct' => [
                     'onlineServices' => [
@@ -79,7 +79,7 @@ class OnlineServiceFeatureFactoryTest extends TestCase
 
     public function testCreateNoOnlineServices()
     {
-        $resource = TestResourceFactory::create([
+        $resource = Resource::create([
             'metadata' => [
                 'citygovProduct' => [
                     'no_online' => 'services',
@@ -93,7 +93,7 @@ class OnlineServiceFeatureFactoryTest extends TestCase
     public function testCreateUnknownResource()
     {
         $onlineServiceResourceUrl =  '/path/to/online/service';
-        $resource = TestResourceFactory::create([
+        $resource = Resource::create([
             'metadata' => [
                 'citygovProduct' => [
                     'onlineServices' => [
