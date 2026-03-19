@@ -8,11 +8,8 @@ use Atoolo\CityGov\ChannelAttributes;
 use Atoolo\CityGov\Service\Indexer\Enricher\{SiteKitSchema2x\OrganisationDocumentEnricher,
     SiteKitSchema2x\ProductDocumentEnricher};
 use Atoolo\CityGov\Test\TestResourceFactory;
-use Atoolo\Resource\DataBag;
 use Atoolo\Resource\Exception\InvalidResourceException;
 use Atoolo\Resource\Exception\ResourceNotFoundException;
-use Atoolo\Resource\Resource;
-use Atoolo\Resource\ResourceLanguage;
 use Atoolo\Resource\ResourceLoader;
 use Atoolo\Search\Exception\DocumentEnrichingException;
 use Atoolo\Search\Service\Indexer\IndexSchema2xDocument;
@@ -52,14 +49,12 @@ class ProductDocumentEnricherTest extends TestCase
         $this->solrIndexService = $this->createMock(SolrIndexService::class);
         $this->solrIndexService->method('updater')->willReturn($this->solrIndexUpdater);
 
-        $resource  = new Resource(
-            'de_DE',
-            'id1',
-            'resource name',
-            'citygovProduct',
-            ResourceLanguage::of('de_DE'),
-            new DataBag([]),
-        );
+        $resource = TestResourceFactory::create([
+            'id' => 'id1',
+            'name' => 'resource name',
+            'objectType' => 'citygovProduct',
+            'locale' => 'de_DE',
+        ]);
         $this->resourceLoader = $this->createStub(
             ResourceLoader::class,
         );
