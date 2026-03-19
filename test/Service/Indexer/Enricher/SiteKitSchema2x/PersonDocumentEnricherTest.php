@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Atoolo\CityGov\Test\Service\Indexer\Enricher\SiteKitSchema2x;
 
+use Atoolo\Resource\Resource;
 use Atoolo\CityGov\Service\Indexer\Enricher\{
     SiteKitSchema2x\OrganisationDocumentEnricher,
     SiteKitSchema2x\PersonDocumentEnricher
 };
-use Atoolo\CityGov\Test\TestResourceFactory;
 use Atoolo\Resource\Exception\InvalidResourceException;
 use Atoolo\Resource\Exception\ResourceNotFoundException;
 use Atoolo\Resource\ResourceLoader;
@@ -388,7 +388,7 @@ class PersonDocumentEnricherTest extends TestCase
         $resourceLoader = $this->createStub(
             ResourceLoader::class,
         );
-        $orga = TestResourceFactory::create([
+        $orga = Resource::create([
             'url' => '/orga.php',
             'id' => '12',
             'name' => 'orga',
@@ -401,7 +401,7 @@ class PersonDocumentEnricherTest extends TestCase
                 ],
             ],
         ]);
-        $product = TestResourceFactory::create([
+        $product = Resource::create([
             'url' => '/product.php',
             'id' => '34',
             'name' => 'product',
@@ -445,7 +445,7 @@ class PersonDocumentEnricherTest extends TestCase
         );
         $doc = $this->createMock(IndexSchema2xDocument::class);
 
-        $resource = TestResourceFactory::create($data);
+        $resource = Resource::create($data);
 
         return $enricher->enrichDocument($resource, $doc, '');
     }
