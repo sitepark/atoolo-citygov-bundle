@@ -35,7 +35,7 @@ class SearchCitygovPersonQueryFactory
             [],
             true,
             false,
-            QueryOperator::OR,
+            QueryOperator::AND,
             null,
             null,
             null,
