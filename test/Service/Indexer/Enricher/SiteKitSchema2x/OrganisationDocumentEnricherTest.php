@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Atoolo\CityGov\Test\Service\Indexer\Enricher\SiteKitSchema2x;
 
 use Atoolo\CityGov\ChannelAttributes;
+use Atoolo\Resource\Resource;
 use Atoolo\CityGov\Service\Indexer\Enricher\{SiteKitSchema2x\OrganisationDocumentEnricher};
-use Atoolo\CityGov\Test\TestResourceFactory;
 use Atoolo\Resource\Loader\SiteKitResourceHierarchyLoader;
 use Atoolo\Resource\ResourceLocation;
 use Atoolo\Search\Exception\DocumentEnrichingException;
@@ -234,7 +234,7 @@ class OrganisationDocumentEnricherTest extends TestCase
         $hierarchyLoader = $this->createStub(
             SiteKitResourceHierarchyLoader::class,
         );
-        $resource = TestResourceFactory::create([
+        $resource = Resource::create([
             'url' => '/12.php',
             'id' => '12',
             'name' => '12',
@@ -301,7 +301,7 @@ class OrganisationDocumentEnricherTest extends TestCase
         );
         $doc = $this->createMock(IndexSchema2xDocument::class);
 
-        $resource = TestResourceFactory::create($data);
+        $resource = Resource::create($data);
 
         return $enricher->enrichDocument($resource, $doc, '');
     }
@@ -315,13 +315,13 @@ class OrganisationDocumentEnricherTest extends TestCase
         $hierarchyLoader = $this->createStub(
             SiteKitResourceHierarchyLoader::class,
         );
-        $resource12 = TestResourceFactory::create(array_merge([
+        $resource12 = Resource::create(array_merge([
             'url' => '/12.php',
             'id' => '12',
             'name' => '12',
             'objectType' => 'citygovOrganisation',
         ], $data));
-        $resource123 = TestResourceFactory::create(array_merge([
+        $resource123 = Resource::create(array_merge([
             'url' => '/123.php',
             'id' => '123',
             'name' => '123',

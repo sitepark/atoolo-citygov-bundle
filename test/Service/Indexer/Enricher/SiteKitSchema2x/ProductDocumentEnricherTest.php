@@ -5,14 +5,11 @@ declare(strict_types=1);
 namespace Atoolo\CityGov\Test\Service\Indexer\Enricher\SiteKitSchema2x;
 
 use Atoolo\CityGov\ChannelAttributes;
+use Atoolo\Resource\Resource;
 use Atoolo\CityGov\Service\Indexer\Enricher\{SiteKitSchema2x\OrganisationDocumentEnricher,
     SiteKitSchema2x\ProductDocumentEnricher};
-use Atoolo\CityGov\Test\TestResourceFactory;
-use Atoolo\Resource\DataBag;
 use Atoolo\Resource\Exception\InvalidResourceException;
 use Atoolo\Resource\Exception\ResourceNotFoundException;
-use Atoolo\Resource\Resource;
-use Atoolo\Resource\ResourceLanguage;
 use Atoolo\Resource\ResourceLoader;
 use Atoolo\Search\Exception\DocumentEnrichingException;
 use Atoolo\Search\Service\Indexer\IndexSchema2xDocument;
@@ -52,14 +49,12 @@ class ProductDocumentEnricherTest extends TestCase
         $this->solrIndexService = $this->createMock(SolrIndexService::class);
         $this->solrIndexService->method('updater')->willReturn($this->solrIndexUpdater);
 
-        $resource  = new Resource(
-            'de_DE',
-            'id1',
-            'resource name',
-            'citygovProduct',
-            ResourceLanguage::of('de_DE'),
-            new DataBag([]),
-        );
+        $resource = Resource::create([
+            'id' => 'id1',
+            'name' => 'resource name',
+            'objectType' => 'citygovProduct',
+            'locale' => 'de_DE',
+        ]);
         $this->resourceLoader = $this->createStub(
             ResourceLoader::class,
         );
@@ -432,7 +427,7 @@ class ProductDocumentEnricherTest extends TestCase
             $this->organisationEnricher,
         );
         $doc = new IndexSchema2xDocument();
-        $resource = TestResourceFactory::create($data);
+        $resource = Resource::create($data);
 
         $enricher->enrichDocument($resource, $doc, '');
         $this->testCleanup();
@@ -464,7 +459,7 @@ class ProductDocumentEnricherTest extends TestCase
             $this->organisationEnricher,
         );
         $doc = new IndexSchema2xDocument();
-        $resource = TestResourceFactory::create($data);
+        $resource = Resource::create($data);
 
         $enricher->enrichDocument($resource, $doc, '');
         $this->testCleanup();
@@ -474,7 +469,7 @@ class ProductDocumentEnricherTest extends TestCase
     private function enrichDocument(
         array $data,
     ): DocumentInterface {
-        $resource = TestResourceFactory::create($data);
+        $resource = Resource::create($data);
         $doc = new IndexSchema2xDocument();
         return $this->productEnricher->enrichDocument($resource, $doc, '');
     }

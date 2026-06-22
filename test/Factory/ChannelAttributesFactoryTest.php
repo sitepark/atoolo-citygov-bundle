@@ -5,7 +5,6 @@ namespace Atoolo\CityGov\Test\Factory;
 use Atoolo\CityGov\Factory\ChannelAttributesFactory;
 use Atoolo\Resource\DataBag;
 use Atoolo\Resource\ResourceChannel;
-use Atoolo\Resource\ResourceTenant;
 use PHPUnit\Framework\TestCase;
 
 class ChannelAttributesFactoryTest extends TestCase
@@ -15,30 +14,27 @@ class ChannelAttributesFactoryTest extends TestCase
      * @param DataBag $attributes
      * @return ChannelAttributesFactory
      */
-    public function getChannelWithAttributes(DataBag $attributes): ChannelAttributesFactory
+    public function getChannelWithAttributes(array $attributes): ChannelAttributesFactory
     {
-        $resourceChannel = new ResourceChannel(
-            'pub1',
-            'www',
-            'www',
-            'Webserver',
-            false,
-            'internet',
-            'de_DE',
-            '/var/www/publisher/',
-            '/',
-            '/',
-            'www',
-            [],
-            $attributes,
-            new ResourceTenant(
-                'pub1',
-                'www',
-                'www',
-                'localhost',
-                new DataBag([]),
-            ),
-        );
+        $resourceChannel = ResourceChannel::create([
+            'id' => 'pub1',
+            'name' => 'www',
+            'anchor' => 'www',
+            'serverName' => 'Webserver',
+            'nature' => 'internet',
+            'locale' => 'de_DE',
+            'baseDir' => '/var/www/publisher/',
+            'resourceDir' => '/',
+            'configDir' => '/',
+            'searchIndex' => 'www',
+            'attributes' => $attributes,
+            'tenant' => [
+                'id' => 'pub1',
+                'name' => 'www',
+                'anchor' => 'www',
+                'host' => 'localhost',
+            ],
+        ]);
         return new ChannelAttributesFactory($resourceChannel);
     }
 
@@ -47,7 +43,7 @@ class ChannelAttributesFactoryTest extends TestCase
      */
     public function testEmpty(): void
     {
-        $factory = $this->getChannelWithAttributes(new DataBag([]));
+        $factory = $this->getChannelWithAttributes([]);
         $channelAttribute = $factory->create();
         $this->assertFalse($channelAttribute->addAlternativeDocuments);
     }
@@ -57,7 +53,7 @@ class ChannelAttributesFactoryTest extends TestCase
      */
     public function testFalse(): void
     {
-        $factory = $this->getChannelWithAttributes(new DataBag(['sp_vv_alternativeTitle' => false]));
+        $factory = $this->getChannelWithAttributes(['sp_vv_alternativeTitle' => false]);
         $channelAttribute = $factory->create();
         $this->assertFalse($channelAttribute->addAlternativeDocuments);
     }
@@ -67,7 +63,7 @@ class ChannelAttributesFactoryTest extends TestCase
      */
     public function testTrue(): void
     {
-        $factory = $this->getChannelWithAttributes(new DataBag(['sp_vv_alternativeTitle' => true]));
+        $factory = $this->getChannelWithAttributes(['sp_vv_alternativeTitle' => true]);
         $channelAttribute = $factory->create();
         $this->assertTrue($channelAttribute->addAlternativeDocuments);
     }
