@@ -33,11 +33,11 @@ class CitygovPersonCompetence
     public function hasFilter(): bool
     {
         return
-            !empty($this->prefix) ||
-            !empty($this->tin) ||
-            !empty($this->file) ||
-            !empty($this->licensePlateLetter) ||
-            !empty($this->licensePlateRegion) ||
-            !empty($this->licensePlateNumber);
+            !empty($this->prefix)
+            || !empty($this->tin)
+            || !empty($this->file)
+            || !empty($this->licensePlateLetter)
+            || !empty($this->licensePlateRegion)
+            || !empty($this->licensePlateNumber);
     }
 }

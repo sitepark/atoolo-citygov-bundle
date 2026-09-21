@@ -11,10 +11,11 @@ use Atoolo\CityGov\Service\Indexer\Enricher\{SiteKitSchema2x\OrganisationDocumen
 use Atoolo\Resource\Exception\InvalidResourceException;
 use Atoolo\Resource\Exception\ResourceNotFoundException;
 use Atoolo\Resource\ResourceLoader;
-use Atoolo\Search\Exception\DocumentEnrichingException;
+use Atoolo\Index\Exception\DocumentEnrichingException;
 use Atoolo\Search\Service\Indexer\IndexSchema2xDocument;
 use Atoolo\Search\Service\Indexer\SolrIndexService;
 use Atoolo\Search\Service\Indexer\SolrIndexUpdater;
+use Atoolo\Search\Service\Indexer\SolrUpdateResult;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\Rule\InvokedCount;
@@ -42,7 +43,7 @@ class ProductDocumentEnricherTest extends TestCase
         $this->solrIndexUpdater = $this->createMock(SolrIndexUpdater::class);
         $this->solrIndexUpdater->method('createDocument')
             ->willReturn($doc);
-        $updateResult = $this->createStub(\Solarium\QueryType\Update\Result::class);
+        $updateResult = $this->createStub(SolrUpdateResult::class);
         $this->solrIndexUpdater->method('update')
             ->willReturn($updateResult);
 
@@ -355,8 +356,8 @@ class ProductDocumentEnricherTest extends TestCase
                                 "richText" => [
                                     "normalized" => true,
                                     "modelType" => "html.richText",
-                                    "text" =>
-                                        "<p><span>Information</span></p>",
+                                    "text"
+                                        => "<p><span>Information</span></p>",
                                 ],
                             ]],
                         ],

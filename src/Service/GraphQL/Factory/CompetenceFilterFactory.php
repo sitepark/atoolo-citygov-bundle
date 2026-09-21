@@ -94,9 +94,9 @@ class CompetenceFilterFactory implements LoggerAwareInterface
             );
         }
         if (
-            $personCompetenceInput->licensePlateRegion !== null ||
-            $personCompetenceInput->licensePlateNumber !== null ||
-            $personCompetenceInput->licensePlateLetter !== null
+            $personCompetenceInput->licensePlateRegion !== null
+            || $personCompetenceInput->licensePlateNumber !== null
+            || $personCompetenceInput->licensePlateLetter !== null
         ) {
             $sqlConditions [] = $this->getConditionByLicensePlate(
                 $personCompetenceInput->licensePlateRegion,

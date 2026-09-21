@@ -7,9 +7,9 @@ namespace Atoolo\CityGov\Service\Indexer\Enricher\SiteKitSchema2x;
 use Atoolo\Resource\Resource;
 use Atoolo\Resource\ResourceLoader;
 use Atoolo\Resource\ResourceLocation;
-use Atoolo\Search\Exception\DocumentEnrichingException;
-use Atoolo\Search\Service\Indexer\DocumentEnricher;
-use Atoolo\Search\Service\Indexer\IndexDocument;
+use Atoolo\Index\Exception\DocumentEnrichingException;
+use Atoolo\Index\Service\Indexer\DocumentEnricher;
+use Atoolo\Index\Service\Indexer\IndexDocument;
 use Atoolo\Search\Service\Indexer\IndexSchema2xDocument;
 use Exception;
 

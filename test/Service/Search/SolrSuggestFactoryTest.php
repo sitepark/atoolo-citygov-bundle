@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Atoolo\CityGov\Test\Service\Search;
 
 use Atoolo\CityGov\Service\Search\SolrSuggestFactory;
-use Atoolo\Search\Service\IndexName;
+use Atoolo\Index\Service\IndexName;
 use Atoolo\Search\Service\Search\QueryTemplateResolver;
 use Atoolo\Search\Service\Search\Schema2xFieldMapper;
 use Atoolo\Search\Service\SolrClientFactory;

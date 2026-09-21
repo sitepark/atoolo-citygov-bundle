@@ -3,7 +3,7 @@
 namespace Atoolo\CityGov\Service\Search;
 
 use Atoolo\Search\Service\Search\SolrSuggest;
-use Atoolo\Search\Service\IndexName;
+use Atoolo\Index\Service\IndexName;
 use Atoolo\Search\Service\Search\QueryTemplateResolver;
 use Atoolo\Search\Service\Search\Schema2xFieldMapper;
 use Atoolo\Search\Service\SolrClientFactory;

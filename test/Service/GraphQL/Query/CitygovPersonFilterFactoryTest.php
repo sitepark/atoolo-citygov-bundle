@@ -134,7 +134,7 @@ class CitygovPersonFilterFactoryTest extends TestCase
             new QueryFilter("sp_citygov_product:(Musterprodukt* OR Musterprodukt)"),
             new QueryFilter("sp_citygov_function:(Musterfunktion* OR Musterfunktion)"),
             new QueryFilter("sp_citygov_organisation:(Musterorganisation* OR Musterorganisation)"
-                . " OR sp_citygov_organisationtoken:Musterorganisation"),
+                . " OR sp_citygov_organisationtoken:(Musterorganisation)"),
             new QueryFilter("sp_citygov_address:(Musteraddresse* OR Musteraddresse)"),
             new QueryFilter("sp_citygov_phone:(Mustertelefonnummer* OR Mustertelefonnummer)"),
         ];

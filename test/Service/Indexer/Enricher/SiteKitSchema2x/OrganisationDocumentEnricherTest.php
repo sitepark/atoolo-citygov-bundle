@@ -9,16 +9,16 @@ use Atoolo\Resource\Resource;
 use Atoolo\CityGov\Service\Indexer\Enricher\{SiteKitSchema2x\OrganisationDocumentEnricher};
 use Atoolo\Resource\Loader\SiteKitResourceHierarchyLoader;
 use Atoolo\Resource\ResourceLocation;
-use Atoolo\Search\Exception\DocumentEnrichingException;
+use Atoolo\Index\Exception\DocumentEnrichingException;
 use Atoolo\Search\Service\Indexer\IndexSchema2xDocument;
 use Atoolo\Search\Service\Indexer\SolrIndexService;
 use Atoolo\Search\Service\Indexer\SolrIndexUpdater;
+use Atoolo\Search\Service\Indexer\SolrUpdateResult;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\MockObject\Rule\InvokedCount;
 use PHPUnit\Framework\TestCase;
-use Solarium\QueryType\Update\Result;
 
 #[CoversClass(OrganisationDocumentEnricher::class)]
 class OrganisationDocumentEnricherTest extends TestCase
@@ -37,7 +37,7 @@ class OrganisationDocumentEnricherTest extends TestCase
         $this->solrIndexUpdater->method('addDocument');
         $this->solrIndexUpdater->method('createDocument')
             ->willReturn($doc);
-        $updateResult = $this->createStub(Result::class);
+        $updateResult = $this->createStub(SolrUpdateResult::class);
         $this->solrIndexUpdater->method('update')
             ->willReturn($updateResult);
 

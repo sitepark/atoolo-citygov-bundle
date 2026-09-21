@@ -8,12 +8,12 @@ use Atoolo\CityGov\ChannelAttributes;
 use Atoolo\Resource\Resource;
 use Atoolo\Resource\ResourceLoader;
 use Atoolo\Resource\ResourceLocation;
-use Atoolo\Search\Exception\DocumentEnrichingException;
-use Atoolo\Search\Service\Indexer\ContentCollector;
-use Atoolo\Search\Service\Indexer\DocumentEnricher;
-use Atoolo\Search\Service\Indexer\IndexDocument;
+use Atoolo\Index\Exception\DocumentEnrichingException;
+use Atoolo\Index\Service\Indexer\ContentCollector;
+use Atoolo\Index\Service\Indexer\DocumentEnricher;
+use Atoolo\Index\Service\Indexer\IndexDocument;
 use Atoolo\Search\Service\Indexer\IndexSchema2xDocument;
-use Atoolo\Search\Service\Indexer\SiteKit\RichtTextMatcher;
+use Atoolo\Index\Service\Indexer\SiteKit\RichtTextMatcher;
 use Atoolo\Search\Service\Indexer\SolrIndexService;
 use Exception;
 
@@ -174,8 +174,8 @@ class ProductDocumentEnricher implements DocumentEnricher
                 if (($responsibility['primary'] ?? false) !== true) {
                     continue;
                 }
-                $primaryOrganisationLocation =
-                    $responsibility['organisation']['url']
+                $primaryOrganisationLocation
+                    = $responsibility['organisation']['url']
                     ?? null;
                 if ($primaryOrganisationLocation === null) {
                     continue;

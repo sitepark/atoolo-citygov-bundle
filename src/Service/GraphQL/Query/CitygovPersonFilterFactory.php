@@ -96,7 +96,7 @@ class CitygovPersonFilterFactory
             CitygovPersonField::PRODUCT => new QueryFilter("sp_citygov_product:($value* OR $value)"),
             CitygovPersonField::FUNCTION => new QueryFilter("sp_citygov_function:($value* OR $value)"),
             CitygovPersonField::ORGANISATION => new QueryFilter("sp_citygov_organisation:($value* OR $value)"
-                . " OR sp_citygov_organisationtoken:$value"),
+                . " OR sp_citygov_organisationtoken:($value)"),
             CitygovPersonField::ADDRESS => new QueryFilter("sp_citygov_address:($value* OR $value)"),
             CitygovPersonField::PHONENUMBER => new QueryFilter("sp_citygov_phone:($value* OR $value)"),
         };
