@@ -91,8 +91,8 @@ class OrganisationDocumentEnricher implements DocumentEnricher
         $doc->sp_organisation = (int) $resource->id;
 
         try {
-            $organisationPath =
-                $this->hierarchyLoader->loadPrimaryPath(
+            $organisationPath
+                = $this->hierarchyLoader->loadPrimaryPath(
                     $resource->toLocation(),
                 );
             $organisationIdPath = array_map(static function ($resource) {

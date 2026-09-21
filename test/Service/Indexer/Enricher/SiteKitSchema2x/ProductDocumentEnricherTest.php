@@ -361,8 +361,8 @@ class ProductDocumentEnricherTest extends TestCase
                                 "richText" => [
                                     "normalized" => true,
                                     "modelType" => "html.richText",
-                                    "text" =>
-                                        "<p><span>Information</span></p>",
+                                    "text"
+                                        => "<p><span>Information</span></p>",
                                 ],
                             ]],
                         ],

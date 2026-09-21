@@ -174,8 +174,8 @@ class ProductDocumentEnricher implements DocumentEnricher
                 if (($responsibility['primary'] ?? false) !== true) {
                     continue;
                 }
-                $primaryOrganisationLocation =
-                    $responsibility['organisation']['url']
+                $primaryOrganisationLocation
+                    = $responsibility['organisation']['url']
                     ?? null;
                 if ($primaryOrganisationLocation === null) {
                     continue;
