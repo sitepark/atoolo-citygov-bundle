@@ -12,7 +12,7 @@ use Atoolo\CityGov\Test\TestResourceFactory;
 use Atoolo\Resource\Exception\InvalidResourceException;
 use Atoolo\Resource\Exception\ResourceNotFoundException;
 use Atoolo\Resource\ResourceLoader;
-use Atoolo\Search\Exception\DocumentEnrichingException;
+use Atoolo\Index\Exception\DocumentEnrichingException;
 use Atoolo\Search\Service\Indexer\IndexSchema2xDocument;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\Exception;
