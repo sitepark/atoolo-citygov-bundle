@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Atoolo\CityGov\Test\Service\Indexer\Enricher\SiteKitSchema2x;
 
+use Atoolo\Resource\Resource;
 use Atoolo\CityGov\Service\Indexer\Enricher\{
     SiteKitSchema2x\ContactPointDocumentEnricher
 };
-use Atoolo\CityGov\Test\TestResourceFactory;
 use Atoolo\Search\Service\Indexer\IndexSchema2xDocument;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\Exception;
@@ -139,7 +139,7 @@ class ContactPointDocumentEnricherTest extends TestCase
         $enricher = new ContactPointDocumentEnricher();
         $doc = $this->createMock(IndexSchema2xDocument::class);
 
-        $resource = TestResourceFactory::create($data);
+        $resource = Resource::create($data);
 
         return $enricher->enrichDocument($resource, $doc, '');
     }
