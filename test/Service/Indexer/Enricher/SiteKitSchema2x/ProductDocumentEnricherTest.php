@@ -18,6 +18,7 @@ use Atoolo\Search\Exception\DocumentEnrichingException;
 use Atoolo\Search\Service\Indexer\IndexSchema2xDocument;
 use Atoolo\Search\Service\Indexer\SolrIndexService;
 use Atoolo\Search\Service\Indexer\SolrIndexUpdater;
+use Atoolo\Search\Service\Indexer\SolrUpdateResult;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\Rule\InvokedCount;
@@ -45,7 +46,7 @@ class ProductDocumentEnricherTest extends TestCase
         $this->solrIndexUpdater = $this->createMock(SolrIndexUpdater::class);
         $this->solrIndexUpdater->method('createDocument')
             ->willReturn($doc);
-        $updateResult = $this->createStub(\Solarium\QueryType\Update\Result::class);
+        $updateResult = $this->createStub(SolrUpdateResult::class);
         $this->solrIndexUpdater->method('update')
             ->willReturn($updateResult);
 
