@@ -1,0 +1,5 @@
+services:
+  Atoolo\CityGov\Service\Indexer\Enricher\GenAi\CityGovGenAiDocumentEnricher:
+    tags:
+      # after the default enricher of the genai-bundle (priority 100)
+      - { name: 'atoolo_genai.indexer.document_enricher', priority: 10 }
