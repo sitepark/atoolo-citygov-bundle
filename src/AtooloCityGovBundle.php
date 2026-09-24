@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Atoolo\CityGov;
 
+use Atoolo\GenAi\Service\Indexer\GenAiDocument;
 use Exception;
 use Symfony\Component\Config\Loader\GlobFileLoader;
 use Symfony\Component\Config\Loader\LoaderResolver;
@@ -42,5 +43,9 @@ class AtooloCityGovBundle extends Bundle
         );
         $loader->load('graphql.yaml');
         $loader->load('services.yaml');
+        // the genai-bundle is optional, see "suggest" in composer.json
+        if (class_exists(GenAiDocument::class)) {
+            $loader->load('genai.yaml');
+        }
     }
 }
