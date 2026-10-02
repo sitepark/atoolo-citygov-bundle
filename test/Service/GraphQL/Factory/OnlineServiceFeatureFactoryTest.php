@@ -9,9 +9,7 @@ use Atoolo\CityGov\Service\GraphQL\Types\OnlineService;
 use Atoolo\CityGov\Service\GraphQL\Types\OnlineServiceFeature;
 use Atoolo\GraphQL\Search\Factory\LinkFactory;
 use Atoolo\GraphQL\Search\Types\Link;
-use Atoolo\Resource\DataBag;
 use Atoolo\Resource\Resource;
-use Atoolo\Resource\ResourceLanguage;
 use Atoolo\Resource\ResourceLoader;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -43,10 +41,10 @@ class OnlineServiceFeatureFactoryTest extends TestCase
 
     public function testCreate()
     {
-        $onlineServiceResource = $this->createResource([]);
+        $onlineServiceResource = Resource::create([]);
         $onlineServiceResourceUrl =  '/path/to/online/service';
         $onlineServiceResourceLink = new Link($onlineServiceResourceUrl);
-        $resource = $this->createResource([
+        $resource = Resource::create([
             'metadata' => [
                 'citygovProduct' => [
                     'onlineServices' => [
@@ -81,7 +79,7 @@ class OnlineServiceFeatureFactoryTest extends TestCase
 
     public function testCreateNoOnlineServices()
     {
-        $resource = $this->createResource([
+        $resource = Resource::create([
             'metadata' => [
                 'citygovProduct' => [
                     'no_online' => 'services',
@@ -95,7 +93,7 @@ class OnlineServiceFeatureFactoryTest extends TestCase
     public function testCreateUnknownResource()
     {
         $onlineServiceResourceUrl =  '/path/to/online/service';
-        $resource = $this->createResource([
+        $resource = Resource::create([
             'metadata' => [
                 'citygovProduct' => [
                     'onlineServices' => [
@@ -115,20 +113,5 @@ class OnlineServiceFeatureFactoryTest extends TestCase
             ->willThrowException(new \Exception());
         $this->logger->expects($this->once())->method('error');
         $this->factory->create($resource);
-    }
-
-    /**
-     * @param array<string,mixed> $data
-     */
-    private function createResource(array $data): Resource
-    {
-        return new Resource(
-            $data['url'] ?? '',
-            $data['id'] ?? '',
-            $data['name'] ?? '',
-            $data['objectType'] ?? '',
-            ResourceLanguage::default(),
-            new DataBag($data),
-        );
     }
 }
