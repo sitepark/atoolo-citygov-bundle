@@ -14,8 +14,6 @@ use Atoolo\Resource\Resource;
 use Atoolo\Resource\ResourceLoader;
 use Atoolo\Resource\ResourceLocation;
 use Exception;
-use Psr\Log\LoggerAwareInterface;
-use Psr\Log\LoggerAwareTrait;
 
 /**
  * Adds the responsibilities of a person to the GenAI index: the
@@ -31,12 +29,8 @@ use Psr\Log\LoggerAwareTrait;
  *
  * @implements DocumentEnricher<GenAiDocument>
  */
-class CityGovPersonGenAiDocumentEnricher implements
-    DocumentEnricher,
-    LoggerAwareInterface
+class CityGovPersonGenAiDocumentEnricher implements DocumentEnricher
 {
-    use LoggerAwareTrait;
-
     /**
      * The labels of the website.
      */
@@ -277,15 +271,7 @@ class CityGovPersonGenAiDocumentEnricher implements
             return $this->resourceLoader->load(
                 ResourceLocation::of($url, $person->lang),
             );
-        } catch (Exception $e) {
-            $this->logger?->warning(
-                'reference of person cannot be loaded',
-                [
-                    'person' => $person->location,
-                    'reference' => $url,
-                    'exception' => $e,
-                ],
-            );
+        } catch (Exception) {
             return null;
         }
     }
