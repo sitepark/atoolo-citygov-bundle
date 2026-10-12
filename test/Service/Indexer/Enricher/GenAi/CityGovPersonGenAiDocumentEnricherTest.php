@@ -16,7 +16,6 @@ use Atoolo\Resource\ResourceLoader;
 use Atoolo\Resource\ResourceLocation;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
-use Psr\Log\LoggerInterface;
 
 #[CoversClass(CityGovPersonGenAiDocumentEnricher::class)]
 class CityGovPersonGenAiDocumentEnricherTest extends TestCase
@@ -142,20 +141,14 @@ class CityGovPersonGenAiDocumentEnricherTest extends TestCase
 
     public function testReferenceThatCannotBeLoadedIsSkipped(): void
     {
-        $logger = $this->createMock(LoggerInterface::class);
-        $logger->expects($this->once())->method('warning');
-
-        $doc = $this->enrichDocument(
-            [
-                'membershipList' => ['items' => [
-                    ['organisation' => ['url' => '/missing.php']],
-                    ['organisation' => []],
-                    'invalid',
-                ]],
-                'substituteList' => ['items' => [['url' => '']]],
-            ],
-            $logger,
-        );
+        $doc = $this->enrichDocument([
+            'membershipList' => ['items' => [
+                ['organisation' => ['url' => '/missing.php']],
+                ['organisation' => []],
+                'invalid',
+            ]],
+            'substituteList' => ['items' => [['url' => '']]],
+        ]);
 
         $this->assertEmpty($doc->content, 'no section expected');
     }
@@ -203,16 +196,10 @@ class CityGovPersonGenAiDocumentEnricherTest extends TestCase
     /**
      * @param array<string,mixed> $person
      */
-    private function enrichDocument(
-        array $person,
-        ?LoggerInterface $logger = null,
-    ): GenAiDocument {
-        $enricher = $this->enricher();
-        if ($logger !== null) {
-            $enricher->setLogger($logger);
-        }
+    private function enrichDocument(array $person): GenAiDocument
+    {
         /** @var GenAiDocument $doc */
-        $doc = $enricher->enrichDocument(
+        $doc = $this->enricher()->enrichDocument(
             $this->person($person),
             new GenAiDocument(),
             'process-id',
