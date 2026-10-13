@@ -1,5 +1,19 @@
+parameters:
+  # replaces the headlines of single content blocks of a service, as a
+  # project names them on its website, e.g. { documents: 'Benötigte Unterlagen' }
+  atoolo_citygov.genai.product_headlines: {}
+
 services:
   Atoolo\CityGov\Service\Indexer\Enricher\GenAi\CityGovGenAiDocumentEnricher:
+    tags:
+      # after the default enricher of the genai-bundle (priority 100)
+      - { name: 'atoolo_genai.indexer.document_enricher', priority: 10 }
+
+  Atoolo\CityGov\Service\Indexer\Enricher\GenAi\CityGovProductGenAiDocumentEnricher:
+    arguments:
+      # the organisations are loaded for every service they are responsible for
+      - '@atoolo_resource.cached_resource_loader'
+      - '%atoolo_citygov.genai.product_headlines%'
     tags:
       # after the default enricher of the genai-bundle (priority 100)
       - { name: 'atoolo_genai.indexer.document_enricher', priority: 10 }
