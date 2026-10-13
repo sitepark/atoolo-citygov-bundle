@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Atoolo\CityGov\Service\Indexer\Enricher\GenAi;
 
 use Atoolo\GenAi\Dto\Indexer\Link;
+use Atoolo\GenAi\Dto\Indexer\TextSection;
 use Atoolo\GenAi\Service\Indexer\GenAiDocument;
 use Atoolo\Index\Service\Indexer\DocumentEnricher;
 use Atoolo\Index\Service\Indexer\IndexDocument;
@@ -12,9 +13,10 @@ use Atoolo\Resource\Resource;
 use Atoolo\Resource\ResourceLoader;
 
 /**
- * Adds the responsibilities of a person to the GenAI index: the
- * organisations the person belongs to, with the function there, the services
- * the person is responsible for and the persons who stand in.
+ * Adds the function and the responsibilities of a person to the GenAI
+ * index: the function the person holds, the organisations the person
+ * belongs to, with the function there, the services the person is
+ * responsible for and the persons who stand in.
  *
  * The person refers to all of them by reference only, see
  * {@see ReferenceListTrait}.
@@ -48,6 +50,16 @@ class CityGovPersonGenAiDocumentEnricher implements DocumentEnricher
     ): IndexDocument {
         if ($resource->objectType !== 'citygovPerson' || $doc->isMedia()) {
             return $doc;
+        }
+
+        $function = $this->function(
+            $resource->data->getArray('metadata.citygovPerson.function'),
+        );
+        if ($function !== '') {
+            $doc->content[] = new TextSection(
+                'Funktion',
+                '<p>' . $this->escape($function) . '</p>',
+            );
         }
 
         /** @var array<mixed> $memberships */
