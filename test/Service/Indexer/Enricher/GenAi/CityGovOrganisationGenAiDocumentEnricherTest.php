@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Atoolo\CityGov\Test\Service\Indexer\Enricher\GenAi;
 
 use Atoolo\CityGov\Service\Indexer\Enricher\GenAi\CityGovOrganisationGenAiDocumentEnricher;
-use Atoolo\CityGov\Test\TestResourceFactory;
 use Atoolo\GenAi\Dto\Indexer\TextSection;
 use Atoolo\GenAi\Service\Indexer\GenAiDocument;
+use Atoolo\Resource\Resource;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
@@ -68,7 +68,7 @@ class CityGovOrganisationGenAiDocumentEnricherTest extends TestCase
         $doc->type = 'media';
 
         (new CityGovOrganisationGenAiDocumentEnricher())->enrichDocument(
-            TestResourceFactory::create([
+            Resource::create([
                 'objectType' => 'citygovOrganisation',
                 'metadata' => ['citygovOrganisation' => ['content' => [
                     'description' => $this->block('<p>Text</p>'),
@@ -96,7 +96,7 @@ class CityGovOrganisationGenAiDocumentEnricherTest extends TestCase
     ): GenAiDocument {
         /** @var GenAiDocument $doc */
         $doc = (new CityGovOrganisationGenAiDocumentEnricher())->enrichDocument(
-            TestResourceFactory::create([
+            Resource::create([
                 'objectType' => $objectType,
                 'metadata' => ['citygovOrganisation' => $organisation],
             ]),
