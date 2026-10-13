@@ -5,32 +5,28 @@ declare(strict_types=1);
 namespace Atoolo\CityGov\Service\Indexer\Enricher\GenAi;
 
 use Atoolo\GenAi\Dto\Indexer\Link;
-use Atoolo\GenAi\Dto\Indexer\LinkSection;
 use Atoolo\GenAi\Dto\Indexer\TextSection;
 use Atoolo\GenAi\Service\Indexer\GenAiDocument;
 use Atoolo\Index\Service\Indexer\DocumentEnricher;
 use Atoolo\Index\Service\Indexer\IndexDocument;
 use Atoolo\Resource\Resource;
 use Atoolo\Resource\ResourceLoader;
-use Atoolo\Resource\ResourceLocation;
-use Exception;
 
 /**
- * Adds the responsibilities of a person to the GenAI index: the
- * organisations the person belongs to, with the function there, the services
- * the person is responsible for and the persons who stand in.
+ * Adds the function and the responsibilities of a person to the GenAI
+ * index: the function the person holds, the organisations the person
+ * belongs to, with the function there, the services the person is
+ * responsible for and the persons who stand in.
  *
- * The person refers to all of them by reference only, without a name, so
- * each one is loaded. A reference that cannot be loaded - unpublished or
- * deleted - is left out, as the website does.
- *
- * The application does not embed the links of a link section, so every name
- * is written into a text section as well, followed by the links.
+ * The person refers to all of them by reference only, see
+ * {@see ReferenceListTrait}.
  *
  * @implements DocumentEnricher<GenAiDocument>
  */
 class CityGovPersonGenAiDocumentEnricher implements DocumentEnricher
 {
+    use ReferenceListTrait;
+
     /**
      * The labels of the website.
      */
@@ -54,6 +50,16 @@ class CityGovPersonGenAiDocumentEnricher implements DocumentEnricher
     ): IndexDocument {
         if ($resource->objectType !== 'citygovPerson' || $doc->isMedia()) {
             return $doc;
+        }
+
+        $function = $this->function(
+            $resource->data->getArray('metadata.citygovPerson.function'),
+        );
+        if ($function !== '') {
+            $doc->content[] = new TextSection(
+                'Funktion',
+                '<p>' . $this->escape($function) . '</p>',
+            );
         }
 
         /** @var array<mixed> $memberships */
@@ -236,54 +242,6 @@ class CityGovPersonGenAiDocumentEnricher implements DocumentEnricher
         return $entries;
     }
 
-    /**
-     * @param list<array{text:string, link:?Link}> $entries
-     */
-    private function addSections(
-        GenAiDocument $doc,
-        string $headline,
-        array $entries,
-    ): void {
-        if (empty($entries)) {
-            return;
-        }
-        $html = '<ul>';
-        $links = [];
-        foreach ($entries as $entry) {
-            $html .= '<li>' . $this->escape($entry['text']) . '</li>';
-            if ($entry['link'] !== null) {
-                $links[] = $entry['link'];
-            }
-        }
-        $doc->content[] = new TextSection($headline, $html . '</ul>');
-        if (!empty($links)) {
-            $doc->content[] = new LinkSection($headline, $links);
-        }
-    }
-
-    private function load(Resource $person, mixed $reference): ?Resource
-    {
-        $url = $this->url($reference);
-        if ($url === '') {
-            return null;
-        }
-        try {
-            return $this->resourceLoader->load(
-                ResourceLocation::of($url, $person->lang),
-            );
-        } catch (Exception) {
-            return null;
-        }
-    }
-
-    private function name(Resource $resource, string $objectType): string
-    {
-        $name = $this->text(
-            $resource->data->getString('metadata.' . $objectType . '.name'),
-        );
-        return $name !== '' ? $name : $this->text($resource->name);
-    }
-
     private function personName(Resource $resource): string
     {
         $name = $this->text(
@@ -304,33 +262,5 @@ class CityGovPersonGenAiDocumentEnricher implements DocumentEnricher
             . ' '
             . $this->text($function['appendix'] ?? null),
         );
-    }
-
-    private function url(mixed $reference): string
-    {
-        $url = is_array($reference) ? ($reference['url'] ?? null) : null;
-        return is_string($url) ? $url : '';
-    }
-
-    private function link(mixed $reference, string $label): ?Link
-    {
-        $url = $this->url($reference);
-        return $url === '' || $label === '' ? null : new Link($url, $label);
-    }
-
-    /**
-     * Trimmed, with the runs of white space the CMS leaves collapsed.
-     */
-    private function text(mixed $text): string
-    {
-        if (!is_string($text)) {
-            return '';
-        }
-        return trim((string) preg_replace('/\s+/u', ' ', $text));
-    }
-
-    private function escape(string $text): string
-    {
-        return htmlspecialchars($text, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
     }
 }

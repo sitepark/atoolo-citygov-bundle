@@ -50,6 +50,25 @@ class CityGovGenAiDocumentEnricherTest extends TestCase
         );
     }
 
+    public function testTokenOfADepartment(): void
+    {
+        $doc = $this->enrichDocument([
+            'objectType' => 'citygovDepartment',
+            'metadata' => [
+                'citygovOrganisation' => [
+                    'synonymList' => ['Wirtschaftsförderung'],
+                    'token' => 'WFB',
+                ],
+            ],
+        ]);
+
+        $this->assertEquals(
+            ['Wirtschaftsförderung', 'WFB'],
+            $doc->keywords,
+            'the token should be a keyword',
+        );
+    }
+
     public function testKeywordsOfOtherEnrichersAreKept(): void
     {
         $doc = new GenAiDocument();

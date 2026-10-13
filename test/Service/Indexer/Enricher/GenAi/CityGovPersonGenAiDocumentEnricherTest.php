@@ -56,6 +56,25 @@ class CityGovPersonGenAiDocumentEnricherTest extends TestCase
         );
     }
 
+    public function testFunctionOfThePerson(): void
+    {
+        $doc = $this->enrichDocument([
+            'function' => [
+                'name' => 'Leiter / Leiterin',
+                'appendix' => 'Stadtrat,  CDU',
+            ],
+        ]);
+
+        $this->assertEquals(
+            [new TextSection(
+                'Funktion',
+                '<p>Leiter / Leiterin Stadtrat, CDU</p>',
+            )],
+            $doc->content,
+            'unexpected function',
+        );
+    }
+
     public function testOrganisationWithoutNameFallsBackToResourceName(): void
     {
         $doc = $this->enrichDocument([
