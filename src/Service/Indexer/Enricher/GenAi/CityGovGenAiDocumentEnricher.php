@@ -11,8 +11,9 @@ use Atoolo\Resource\Resource;
 
 /**
  * Adds the synonyms and the alternative names of services and organisations
- * to the keywords of the GenAI index, so that a question finds them by a term
- * their text does not contain.
+ * and the token of an organisation (such as "BB Mitte") to the keywords of
+ * the GenAI index, so that a question finds them by a term their text does
+ * not contain.
  *
  * The Solr index turns the alternative names into documents of their own for
  * the A-Z list. The GenAI index would only hold the same text twice, so they
@@ -22,7 +23,15 @@ use Atoolo\Resource\Resource;
  */
 class CityGovGenAiDocumentEnricher implements DocumentEnricher
 {
-    private const OBJECT_TYPES = ['citygovProduct', 'citygovOrganisation'];
+    /**
+     * The object types by the key of their metadata; a department is an
+     * organisation of its own type.
+     */
+    private const OBJECT_TYPES = [
+        'citygovProduct' => 'citygovProduct',
+        'citygovOrganisation' => 'citygovOrganisation',
+        'citygovDepartment' => 'citygovOrganisation',
+    ];
 
     public function cleanup(): void {}
 
@@ -31,7 +40,8 @@ class CityGovGenAiDocumentEnricher implements DocumentEnricher
         IndexDocument $doc,
         string $processId,
     ): IndexDocument {
-        if (!in_array($resource->objectType, self::OBJECT_TYPES, true)) {
+        $metadata = self::OBJECT_TYPES[$resource->objectType] ?? null;
+        if ($metadata === null) {
             return $doc;
         }
 
@@ -39,12 +49,15 @@ class CityGovGenAiDocumentEnricher implements DocumentEnricher
             $doc->addKeywords(
                 ...array_values(array_filter(
                     $resource->data->getArray(
-                        'metadata.' . $resource->objectType . '.' . $list,
+                        'metadata.' . $metadata . '.' . $list,
                     ),
                     'is_string',
                 )),
             );
         }
+        $doc->addKeywords(
+            $resource->data->getString('metadata.' . $metadata . '.token'),
+        );
 
         return $doc;
     }

@@ -18,6 +18,11 @@ services:
       # after the default enricher of the genai-bundle (priority 100)
       - { name: 'atoolo_genai.indexer.document_enricher', priority: 10 }
 
+  Atoolo\CityGov\Service\Indexer\Enricher\GenAi\CityGovOrganisationGenAiDocumentEnricher:
+    tags:
+      # after the default enricher of the genai-bundle (priority 100)
+      - { name: 'atoolo_genai.indexer.document_enricher', priority: 10 }
+
   Atoolo\CityGov\Service\Indexer\Enricher\GenAi\CityGovPersonGenAiDocumentEnricher:
     arguments:
       # the organisations are loaded for every person they hold
