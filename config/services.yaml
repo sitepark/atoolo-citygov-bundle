@@ -124,7 +124,7 @@ services:
           - '%atoolo_citygov.graphql.factory.competence_filter_factory.database.name%'
 
   atoolo_citygov.graphql.factory.alternative_title_teaser_factory:
-      class: Atoolo\CityGov\Service\GraphQL\Factory\AlternativeTitelTeaserFactory
+      class: Atoolo\CityGov\Service\GraphQL\Factory\AlternativeTitleTeaserFactory
       arguments:
           - '@atoolo_graphql_search.factory.link_factory'
       tags:

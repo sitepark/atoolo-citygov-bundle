@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Atoolo\CityGov\Test\Service\GraphQL\Factory;
 
-use Atoolo\CityGov\Service\GraphQL\Factory\AlternativeTitelTeaserFactory;
+use Atoolo\CityGov\Service\GraphQL\Factory\AlternativeTitleTeaserFactory;
 use Atoolo\GraphQL\Search\Factory\LinkFactory;
 use Atoolo\GraphQL\Search\Types\ArticleTeaser;
 use Atoolo\GraphQL\Search\Types\Link;
@@ -15,17 +15,17 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-#[CoversClass(AlternativeTitelTeaserFactory::class)]
-class AlternativeTitelTeaserFactoryTest extends TestCase
+#[CoversClass(AlternativeTitleTeaserFactory::class)]
+class AlternativeTitleTeaserFactoryTest extends TestCase
 {
     private LinkFactory&MockObject $linkFactory;
-    private AlternativeTitelTeaserFactory $factory;
+    private AlternativeTitleTeaserFactory $factory;
     private Link $link;
 
     protected function setUp(): void
     {
         $this->linkFactory = $this->createMock(LinkFactory::class);
-        $this->factory = new AlternativeTitelTeaserFactory($this->linkFactory);
+        $this->factory = new AlternativeTitleTeaserFactory($this->linkFactory);
         $this->link = new Link('/test');
     }
 

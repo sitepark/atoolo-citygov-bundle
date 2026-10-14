@@ -10,7 +10,7 @@ use Atoolo\GraphQL\Search\Types\ArticleTeaser;
 use Atoolo\GraphQL\Search\Types\Teaser;
 use Atoolo\Resource\Resource;
 
-class AlternativeTitelTeaserFactory implements TeaserFactory
+class AlternativeTitleTeaserFactory implements TeaserFactory
 {
     public function __construct(
         private readonly LinkFactory $linkFactory,
