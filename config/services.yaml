@@ -36,9 +36,15 @@ services:
   Atoolo\CityGov\Service\Indexer\Enricher\SiteKitSchema2x\ContactPointDocumentEnricher:
     tags:
       - { name: 'atoolo_search.indexer.document_enricher.schema2x', priority: 9 }
-  
-  # suggest
 
+  Atoolo\CityGov\Service\Search\CityGovResourceFactory:
+      arguments:
+          - '@atoolo_resource.resource_loader'
+          - '@atoolo_citygov.resource_channel_attributes'
+      tags:
+          - { name: 'atoolo_search.resource_factory', priority: 11 }
+
+  # suggest
   atoolo_citygov.search.solr_suggest_factory:
     class: Atoolo\CityGov\Service\Search\SolrSuggestFactory
     arguments:
@@ -116,6 +122,15 @@ services:
           - '%atoolo_resource.resource_root%'
           - '%atoolo_citygov.graphql.factory.competence_filter_factory.database.path%'
           - '%atoolo_citygov.graphql.factory.competence_filter_factory.database.name%'
+
+  atoolo_citygov.graphql.factory.alternative_title_teaser_factory:
+      class: Atoolo\CityGov\Service\GraphQL\Factory\AlternativeTitleTeaserFactory
+      arguments:
+          - '@atoolo_graphql_search.factory.link_factory'
+      tags:
+          - { name: 'atoolo_graphql_search.teaser_factory', objectType: 'citygovProduct' }
+          - { name: 'atoolo_graphql_search.teaser_factory', objectType: 'citygovOrganisation' }
+          - { name: 'atoolo_graphql_search.teaser_factory', objectType: 'citygovDepartment' }
 
   atoolo_citygov.graphql.query.citygov_person_filter_factory:
       class: Atoolo\CityGov\Service\GraphQL\Query\CitygovPersonFilterFactory
