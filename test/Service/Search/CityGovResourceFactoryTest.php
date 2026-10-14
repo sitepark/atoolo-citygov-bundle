@@ -170,6 +170,35 @@ class CityGovResourceFactoryTest extends TestCase
         $this->assertSame($resource, $result, 'resource should be unchanged');
     }
 
+    public function testCreateWithNonStringEntry(): void
+    {
+        $factory = $this->createFactory(addAlternativeDocuments: true);
+
+        $resource = $this->createResourceWithAlternativeNames([]);
+        $resource = new \Atoolo\Resource\Resource(
+            location: '/test.php',
+            id: 'test-id',
+            name: 'Test',
+            objectType: 'content',
+            lang: \Atoolo\Resource\ResourceLanguage::of('de'),
+            data: new \Atoolo\Resource\DataBag([
+                'metadata' => [
+                    'citygovProduct' => [
+                        'alternativeNameList' => [42, true],
+                    ],
+                ],
+            ]),
+        );
+        $this->resourceLoader->method('load')->willReturn($resource);
+
+        $result = $factory->create(
+            $this->createDocument('/test.php?cg_at_id=0'),
+            \Atoolo\Resource\ResourceLanguage::of('de'),
+        );
+
+        $this->assertSame($resource, $result, 'resource should be unchanged for non-string entry');
+    }
+
     public function testCreateWithOutOfBoundsIndex(): void
     {
         $factory = $this->createFactory(addAlternativeDocuments: true);
