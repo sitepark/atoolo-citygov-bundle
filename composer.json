@@ -11,17 +11,17 @@
     ],
     "require": {
         "php": ">=8.1 <8.6.0",
-        "atoolo/graphql-search-bundle": "dev-feature/id-based-resource-location",
-        "atoolo/resource-bundle": "dev-feature/id-based-resource-location as 1.x-dev",
-        "atoolo/index-bundle": "dev-feature/id-based-resource-location as 1.x-dev",
-        "atoolo/search-bundle": "dev-feature/id-based-resource-location",
+        "atoolo/graphql-search-bundle": "dev-main",
+        "atoolo/resource-bundle": "dev-main",
+        "atoolo/index-bundle": "dev-main",
+        "atoolo/search-bundle": "dev-main",
         "symfony/config": "^6.3 || ^7.0",
         "symfony/dependency-injection": "^6.3 || ^7.0",
         "symfony/http-kernel": "^6.3 || ^7.0",
         "symfony/yaml": "^6.3 || ^7.0"
     },
     "require-dev": {
-        "atoolo/genai-bundle": "dev-feature/id-based-resource-location",
+        "atoolo/genai-bundle": "dev-main",
         "dealerdirect/phpcodesniffer-composer-installer": "^1.0",
         "infection/infection": "^0.27.6",
         "overtrue/phplint": "^9.7.1",
