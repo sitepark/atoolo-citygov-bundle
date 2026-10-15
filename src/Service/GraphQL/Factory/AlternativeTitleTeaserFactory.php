@@ -20,7 +20,8 @@ class AlternativeTitleTeaserFactory implements TeaserFactory
     {
         $url = $resource->data->getString('url');
         $linkResource = $url !== '' ? new Resource(
-            location: $url,
+            location: $resource->location,
+            url: $url,
             id: $resource->id,
             name: $resource->name,
             objectType: $resource->objectType,

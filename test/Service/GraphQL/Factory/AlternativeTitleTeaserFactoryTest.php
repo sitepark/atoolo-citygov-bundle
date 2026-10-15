@@ -41,7 +41,7 @@ class AlternativeTitleTeaserFactoryTest extends TestCase
             ->expects($this->once())
             ->method('create')
             ->with($this->callback(
-                fn(Resource $r) => $r->location === $alternativeUrl,
+                fn(Resource $r) => $r->url === $alternativeUrl,
             ))
             ->willReturn($this->link);
 
@@ -80,6 +80,7 @@ class AlternativeTitleTeaserFactoryTest extends TestCase
     {
         $resource = new Resource(
             location: '/product.php',
+            url: '/product.php',
             id: 'id',
             name: 'Resource Name',
             objectType: 'citygovProduct',
@@ -138,6 +139,7 @@ class AlternativeTitleTeaserFactoryTest extends TestCase
     {
         return new Resource(
             location: '/product.php',
+            url: '/product.php',
             id: 'test-id',
             name: 'Test Product',
             objectType: 'citygovProduct',
