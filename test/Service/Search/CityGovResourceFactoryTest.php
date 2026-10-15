@@ -177,6 +177,7 @@ class CityGovResourceFactoryTest extends TestCase
         $resource = $this->createResourceWithAlternativeNames([]);
         $resource = new \Atoolo\Resource\Resource(
             location: '/test.php',
+            url: '/test.php',
             id: 'test-id',
             name: 'Test',
             objectType: 'content',
@@ -230,6 +231,7 @@ class CityGovResourceFactoryTest extends TestCase
     {
         return new Resource(
             location: '/test.php',
+            url: '/test.php',
             id: 'test-id',
             name: 'Test',
             objectType: 'content',

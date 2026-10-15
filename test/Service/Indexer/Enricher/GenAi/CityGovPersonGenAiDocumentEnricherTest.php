@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Atoolo\CityGov\Test\Service\Indexer\Enricher\GenAi;
 
 use Atoolo\CityGov\Service\Indexer\Enricher\GenAi\CityGovPersonGenAiDocumentEnricher;
-use Atoolo\CityGov\Test\TestResourceFactory;
 use Atoolo\GenAi\Dto\Indexer\Link;
 use Atoolo\GenAi\Dto\Indexer\LinkSection;
 use Atoolo\GenAi\Dto\Indexer\TextSection;
@@ -176,7 +175,7 @@ class CityGovPersonGenAiDocumentEnricherTest extends TestCase
     {
         $doc = new GenAiDocument();
         $this->enricher()->enrichDocument(
-            TestResourceFactory::create([
+            Resource::create([
                 'objectType' => 'citygovOrganisation',
                 'metadata' => ['citygovPerson' => ['membershipList' => [
                     'items' => [['organisation' => ['url' => '/gkr.php']]],
@@ -231,7 +230,7 @@ class CityGovPersonGenAiDocumentEnricherTest extends TestCase
      */
     private function person(array $person): Resource
     {
-        return TestResourceFactory::create([
+        return Resource::create([
             'objectType' => 'citygovPerson',
             'metadata' => ['citygovPerson' => $person],
         ]);
@@ -275,7 +274,7 @@ class CityGovPersonGenAiDocumentEnricherTest extends TestCase
                 if ($data === null) {
                     throw new ResourceNotFoundException($location);
                 }
-                return TestResourceFactory::create(
+                return Resource::create(
                     ['url' => $location->location] + $data,
                 );
             },

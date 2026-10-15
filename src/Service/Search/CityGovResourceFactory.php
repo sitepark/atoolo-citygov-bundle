@@ -86,6 +86,7 @@ class CityGovResourceFactory implements ResourceFactory
 
         return new Resource(
             location: $resource->location,
+            url: $resource->url,
             id: $resource->id,
             name: $resource->name,
             objectType: $resource->objectType,

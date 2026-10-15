@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Atoolo\CityGov\Test\Service\Indexer\Enricher\GenAi;
 
 use Atoolo\CityGov\Service\Indexer\Enricher\GenAi\CityGovGenAiDocumentEnricher;
-use Atoolo\CityGov\Test\TestResourceFactory;
 use Atoolo\GenAi\Service\Indexer\GenAiDocument;
+use Atoolo\Resource\Resource;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
@@ -75,7 +75,7 @@ class CityGovGenAiDocumentEnricherTest extends TestCase
         $doc->addKeywords('Reisepass');
 
         (new CityGovGenAiDocumentEnricher())->enrichDocument(
-            TestResourceFactory::create([
+            Resource::create([
                 'objectType' => 'citygovProduct',
                 'metadata' => [
                     'citygovProduct' => ['synonymList' => ['Pass']],
@@ -129,7 +129,7 @@ class CityGovGenAiDocumentEnricherTest extends TestCase
     {
         /** @var GenAiDocument $doc */
         $doc = (new CityGovGenAiDocumentEnricher())->enrichDocument(
-            TestResourceFactory::create($data),
+            Resource::create($data),
             new GenAiDocument(),
             'process-id',
         );
