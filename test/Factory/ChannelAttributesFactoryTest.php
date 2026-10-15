@@ -3,7 +3,6 @@
 namespace Atoolo\CityGov\Test\Factory;
 
 use Atoolo\CityGov\Factory\ChannelAttributesFactory;
-use Atoolo\Resource\DataBag;
 use Atoolo\Resource\ResourceChannel;
 use PHPUnit\Framework\TestCase;
 
@@ -11,7 +10,7 @@ class ChannelAttributesFactoryTest extends TestCase
 {
     /**
      * Helper function
-     * @param DataBag $attributes
+     * @param array<string,mixed> $attributes
      * @return ChannelAttributesFactory
      */
     public function getChannelWithAttributes(array $attributes): ChannelAttributesFactory
