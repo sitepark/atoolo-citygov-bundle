@@ -38,6 +38,9 @@ trait AddAlternativeDocumentsTrait
                 $alternativeDocument->content = null;
                 $alternativeDocument->id = $originDocument->id . '-' . $i;
                 $alternativeDocument->url = $originDocument->url . '?cg_at_id=' . $i;
+                // relevant für teil-updates.
+                $alternativeDocument->sp_id = $originDocument->sp_id;
+                $alternativeDocument->crawl_process_id = $originDocument->crawl_process_id;
                 $updater->addDocument($alternativeDocument);
             }
             $updater->update();
